@@ -117,3 +117,16 @@ footer {
     padding: 20px 0;
     margin-top: 40px;
 }
+/* --- Launch Banner Styling --- */
+.launch-banner {
+    padding: 20px 0;
+    text-align: center;
+    background-color: #f0f0f0; /* Optional: Halka background */
+}
+
+.responsive-banner {
+    max-width: 100%; /* Banner ko screen size ke hisaab se adjust karega */
+    height: auto;   /* Aspect ratio maintain rakhega */
+    border-radius: 8px; /* Halki golai edges par */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Halka shadow */
+}
