@@ -130,3 +130,11 @@ footer {
     border-radius: 8px; /* Halki golai edges par */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Halka shadow */
 }
+/* Style.css */
+.product-image {
+    transition: transform 0.3s ease; /* Animation smooth karta hai */
+}
+
+.product-image:hover {
+    transform: scale(1.05); /* Image ko 5% bada karega */
+}
