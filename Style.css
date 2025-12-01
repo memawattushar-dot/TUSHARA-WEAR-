@@ -162,4 +162,101 @@ nav a:hover {
     background-color: #555;
     border-radius: 5px;
     }
+/* Style.css mein yeh saara code daalein */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Light grey background */
+}
+
+/* --- Navigation Bar --- */
+nav {
+    background-color: #1a1a1a; /* Dark background */
+    padding: 15px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    margin: 0 10px;
+    font-size: 18px;
+    transition: background-color 0.3s, transform 0.3s; /* Smooth animation */
+}
+
+nav a:hover {
+    background-color: #4a4a4a;
+    border-radius: 5px;
+    transform: scale(1.05); /* Thoda zoom */
+}
+
+/* --- Hero Section (Banner) --- */
+.hero-section {
+    position: relative;
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.hero-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    opacity: 0.7; /* Image ko halka sa dark karna */
+}
+
+.hero-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* --- Buttons --- */
+.cta-button {
+    display: inline-block;
+    background-color: #ff6600; /* Bright orange button */
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+    background-color: #e65c00;
+}
+
+/* --- Products Page Container --- */
+.products-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.product-card {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 20px;
+    display: inline-block;
+    width: 300px;
+    transition: box-shadow 0.3s;
+}
+
+.product-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
     
