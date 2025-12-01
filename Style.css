@@ -138,3 +138,28 @@ footer {
 .product-image:hover {
     transform: scale(1.05); /* Image ko 5% bada karega */
 }
+/* Style.css mein yeh code daalein */
+
+/* Navigation Bar ka background set karna */
+nav {
+    background-color: #333; /* Dark background */
+    padding: 15px;
+    text-align: center;
+}
+
+/* Links ko style karna */
+nav a {
+    color: white; /* Text white hoga */
+    text-decoration: none; /* Link ke neeche ki line hat jaayegi */
+    padding: 15px 20px;
+    margin: 0 10px;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+/* Jab mouse link par le jaayega (hover), toh rang badlega */
+nav a:hover {
+    background-color: #555;
+    border-radius: 5px;
+    }
+    
