@@ -3,448 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUSHARA-WEAR AI Assistant</title>
+    <title>TUSHARA-WEAR AI Stylist Pro</title>
     <!-- Tailwind CSS (For responsive and modern design) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for branding and scrollbar */
-        body { font-family: 'Inter', sans-serif; background-color: #f7f7f7; }
-        .chat-container { max-height: calc(100vh - 80px); overflow-y: auto; scroll-behavior: smooth; }
-        .user-message { background-color: #1e3a8a; } /* TUSHARA-WEAR Blue */
-        .ai-message { border: 1px solid #e5e7eb; }
+        /* Custom styles for premium branding and scrollbar */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #e5e7eb; /* Light Gray Background */
+        }
+        .chat-container { 
+            max-height: calc(100vh - 120px); 
+            overflow-y: auto; 
+            scroll-behavior: smooth; 
+        }
+        /* TUSHARA-WEAR Premium Navy Color */
+        .primary-dark { background-color: #15203A; } 
+        .text-primary-dark { color: #15203A; }
+        .border-primary-dark { border-color: #15203A; }
+
+        /* Custom AI Message Card Style */
+        .ai-message-card { 
+            border: 1px solid #d1d5db; 
+            background-color: #ffffff;
+            transition: transform 0.2s;
+        }
+        .ai-message-card:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
         /* Simple Loader style */
-        .loader { border-left-color: #1e3a8a; animation: spin 1s linear infinite; }
+        .loader { border-left-color: #15203A; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Custom Scrollbar for better UX */
+        .chat-container::-webkit-scrollbar { width: 8px; }
+        .chat-container::-webkit-scrollbar-thumb { background-color: #15203A; border-radius: 4px; }
+        .chat-container::-webkit-scrollbar-track { background-color: #f3f4f6; }
+        
+        /* User Message Style */
+        .user-message {
+            background-color: #3b82f6; /* Blue-600 */
+            color: white;
+        }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col h-screen">
+<body class="flex flex-col h-screen">
 
-    <!-- Header / Nav Bar -->
-    <header class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-10">
-        <div class="text-2xl font-bold text-[#1e3a8a]">TUSHARA AI</div>
+    <!-- Header / Nav Bar (Premium Look) -->
+    <header class="bg-white shadow-lg p-4 flex justify-between items-center sticky top-0 z-10 border-b border-gray-200">
+        <div class="text-3xl font-extrabold text-primary-dark tracking-wide">TUSHARA AI Pro</div>
         <!-- Consultation Mode Toggle -->
         <div class="flex items-center space-x-2">
-            <span class="text-sm text-gray-600">Consultation Mode:</span>
+            <span class="text-sm font-medium text-gray-700">Consultation Mode:</span>
             <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" id="consultation-mode-toggle" class="sr-only peer">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                <!-- Customized Toggle Switch -->
+                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#15203A]"></div>
             </label>
         </div>
     </header>
 
     <!-- Chat Messages Container -->
     <div id="chat-container" class="chat-container flex-grow p-4 space-y-4 overflow-y-auto">
-        <div class="ai-message p-3 rounded-xl shadow-lg max-w-4/5 mx-auto md:max-w-3xl bg-white self-start">
-            <p class="font-semibold text-[#1e3a8a]">AI Stylist:</p>
-            <p class="text-gray-700 mt-1">Hello! I am your TUSHARA-WEAR AI Stylist. Ask me for outfit ideas (e.g., "Suggest a look"), upload a photo for visual analysis, or turn on Consultation Mode for a detailed chat!</p>
-            <div class="text-right mt-2"><button onclick="speakMessage(this.parentElement.previousElementSibling.innerText, 'Kore')" class="text-gray-500 hover:text-[#1e3a8a] transition duration-150"><svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M5.8 11a1 1 0 100 2 1 1 0 000-2z"></path></svg></button></div>
+        <!-- Initial Welcome Message -->
+        <div class="ai-message-card p-4 rounded-xl shadow-lg max-w-4/5 mx-auto md:max-w-3xl bg-white self-start">
+            <p class="font-bold text-lg text-primary-dark">AI Stylist Pro:</p>
+            <p class="text-gray-700 mt-2">Hello! I am TUSHARA-WEAR's most advanced AI Stylist. Share your styling needs. Upload a photo for body-type analysis, or request an 'Outfit Recipe' to view your personalized FitScore!</p>
+            <div class="text-right mt-3">
+                <button onclick="speakMessage(this.parentElement.previousElementSibling.innerText, 'Kore')" class="text-gray-500 hover:text-primary-dark transition duration-150 p-1 rounded-full hover:bg-gray-100">
+                    <svg class="w-6 h-6 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M5.8 11a1 1 0 100 2 1 1 0 000-2z"></path></svg>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Input Area -->
-    <div class="input-area p-4 bg-white shadow-lg sticky bottom-0">
-        <div id="image-preview" class="mb-2 hidden">
-            <img class="max-h-24 max-w-full rounded-lg shadow-md" id="preview-img" alt="Uploaded Image Preview">
-            <button onclick="removeImage()" class="text-red-500 text-sm mt-1">Remove Image</button>
+    <!-- Input Area (Enhanced Look) -->
+    <div class="input-area p-4 bg-white shadow-2xl sticky bottom-0 border-t border-gray-300">
+        <div id="image-preview" class="mb-3 p-2 bg-gray-100 rounded-lg hidden flex justify-between items-center">
+            <img class="max-h-20 w-auto rounded-md shadow-inner" id="preview-img" alt="Uploaded Image Preview">
+            <button onclick="removeImage()" class="text-red-500 hover:text-red-700 transition duration-150 p-1">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
         </div>
         <div class="flex items-end space-x-3">
             <!-- Image Upload Button -->
-            <label for="image-upload" class="p-3 bg-gray-200 rounded-full cursor-pointer hover:bg-gray-300 transition duration-150 shadow-md flex-shrink-0">
-                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <label for="image-upload" class="p-3 primary-dark text-white rounded-full cursor-pointer hover:bg-gray-700 transition duration-150 shadow-lg flex-shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             </label>
             <input type="file" id="image-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
             
             <!-- Text Input -->
-            <textarea id="user-input" class="flex-grow p-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-[#1e3a8a] focus:border-[#1e3a8a] shadow-md" rows="1" placeholder="Type your fashion question here..." onkeydown="handleKeyDown(event)"></textarea>
+            <textarea id="user-input" class="flex-grow p-4 border border-gray-300 rounded-2xl resize-none focus:ring-4 focus:ring-blue-200 focus:border-primary-dark shadow-inner text-gray-800" rows="1" placeholder="Ask about fashion, e.g., 'Outfit Recipe for the office?'" onkeydown="handleKeyDown(event)"></textarea>
             
             <!-- Send Button -->
-            <button id="send-btn" onclick="sendMessage()" class="p-3 bg-[#1e3a8a] text-white rounded-full hover:bg-blue-800 transition duration-150 shadow-lg flex-shrink-0">
+            <button id="send-btn" onclick="sendMessage()" class="p-3 primary-dark text-white rounded-full hover:bg-gray-700 transition duration-150 shadow-xl flex-shrink-0 transform active:scale-95">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
             </button>
         </div>
     </div>
 
     <!-- Loading Indicator -->
-    <div id="loading-indicator" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white p-4 rounded-lg shadow-xl flex items-center space-x-3">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-8 w-8"></div>
-            <span class="text-gray-700">Thinking...</span>
+    <div id="loading-indicator" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-xl shadow-2xl flex flex-col items-center space-y-3">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-10 w-10"></div>
+            <span class="text-lg font-medium text-primary-dark">AI is thinking...</span>
         </div>
     </div>
     
-    <!-- JavaScript Code Starts Here -->
+    <!-- --- JavaScript Code Starts Here --- -->
     <script>
-    // --- Global Variables ---
-    const chatContainer = document.getElementById('chat-container');
-    const userInput = document.getElementById('user-input');
-    const loadingIndicator = document.getElementById('loading-indicator');
-    const imageUpload = document.getElementById('image-upload');
-    const previewImg = document.getElementById('preview-img');
-    const imagePreview = document.getElementById('image-preview');
-    const consultationToggle = document.getElementById('consultation-mode-toggle');
-    let base64Image = null; // अपलोड की गई इमेज का डेटा
+        // --- Global Variables ---
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const imageUpload = document.getElementById('image-upload');
+        const previewImg = document.getElementById('preview-img');
+        const imagePreview = document.getElementById('image-preview');
+        const consultationToggle = document.getElementById('consultation-mode-toggle');
+        let base64Image = null; // Stores uploaded image data
 
-    const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
-    const TTS_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=";
-    // --- PWA Setup Logic (Manifest and Service Worker) ---
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            // PWA Manifest को डायनामिक रूप से बनाएं
-            const manifestContent = {
-                "name": "TUSHARA-WEAR AI Assistant",
-                "short_name": "Tushara AI",
-                "description": "Your AI Fashion Stylist and Shopping Assistant",
-                "start_url": "/TUSHARA-WEAR/",
-                "display": "standalone",
-                "background_color": "#ffffff",
-                "theme_color": "#1e3a8a",
-                "icons": [
-                    { "src": "/TUSHARA-WEAR/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
-                    { "src": "/TUSHARA-WEAR/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
-                ]
-            };
-            const manifestBlob = new Blob([JSON.stringify(manifestContent)], { type: 'application/json' });
-            const manifestUrl = URL.createObjectURL(manifestBlob);
+        // --- API Endpoints ---
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
+        const TTS_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=";
 
-            const manifestLink = document.createElement('link');
-            manifestLink.rel = 'manifest';
-            manifestLink.href = manifestUrl;
-            document.head.appendChild(manifestLink);
-
-            // Minimal Service Worker को डायनामिक रूप से रजिस्टर करें
-            const swCode = `
-                const CACHE_NAME = 'tushara-ai-cache-v1';
-                self.addEventListener('fetch', event => {
-                    event.respondWith(caches.match(event.request).then(response => response || fetch(event.request)));
-                });
-                self.addEventListener('install', event => {
-                    event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(['/TUSHARA-WEAR/', '/TUSHARA-WEAR/index.html'])));
-                });
-                self.addEventListener('activate', event => event.waitUntil(clients.claim()));
-            `;
-            const swBlob = new Blob([swCode], { type: 'application/javascript' });
-            const swUrl = URL.createObjectURL(swBlob);
-
-            navigator.serviceWorker.register(swUrl, { scope: '/TUSHARA-WEAR/' }).then(registration => {
-                console.log('Service Worker registered successfully:', registration);
-            }).catch(error => {
-                console.error('Service Worker registration failed:', error);
-            });
-        });
-                }
-    // --- Utility Functions for TTS (Text-to-Speech) ---
-    function base64ToArrayBuffer(base64) {
-        const binaryString = atob(base64);
-        const len = binaryString.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
-        return bytes.buffer;
-    }
-
-    function writeString(view, offset, string) {
-        for (let i = 0; i < string.length; i++) {
-            view.setUint8(offset + i, string.charCodeAt(i));
-        }
-    }
-
-    function pcmToWav(pcm16, sampleRate, mimeType) {
-        const buffer = new ArrayBuffer(44 + pcm16.length * 2);
-        const view = new DataView(buffer);
-        // WAV header creation
-        writeString(view, 0, 'RIFF');
-        view.setUint32(4, 36 + pcm16.length * 2, true);
-        writeString(view, 8, 'WAVE');
-        writeString(view, 12, 'fmt ');
-        view.setUint32(16, 16, true);
-        view.setUint16(20, 1, true); 
-        view.setUint16(22, 1, true); 
-        view.setUint32(24, sampleRate, true);
-        view.setUint32(28, sampleRate * 2, true); 
-        view.setUint16(32, 2, true); 
-        view.setUint16(34, 16, true); 
-        writeString(view, 36, 'data');
-        view.setUint32(40, pcm16.length * 2, true);
-        let offset = 44;
-        for (let i = 0; i < pcm16.length; i++) {
-            view.setInt16(offset, pcm16[i], true);
-            offset += 2;
-        }
-        return new Blob([view], { type: 'audio/wav' });
-        }
-            // --- Message Handling Functions ---
-    function handleKeyDown(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault(); 
-            sendMessage();
-        }
-    }
-
-    function removeImage() {
-        base64Image = null;
-        imageUpload.value = '';
-        imagePreview.classList.add('hidden');
-        previewImg.src = '';
-    }
-
-    function handleImageUpload(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                base64Image = e.target.result.split(',')[1];
-                previewImg.src = e.target.result;
-                imagePreview.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-    
-    // Structured data (Outfit Recipe Card) को रेंडर करता है
-    function renderOutfitCard(cardData, container) {
-        const items = Array.isArray(cardData) ? cardData : [cardData];
-
-        let html = '<div class="bg-gray-50 p-4 rounded-xl shadow-inner mt-2 border border-gray-200">';
-        html += '<h3 class="text-lg font-bold text-[#1e3a8a] mb-2 border-b border-blue-200 pb-1">TUSHARA Style Recipe</h3>';
-        
-        items.forEach((item, index) => {
-            html += `<div class="${index > 0 ? 'mt-4 pt-4 border-t border-gray-100' : ''}">`;
-            html += `<p class="font-semibold text-gray-800 text-base">${item.styleName || 'Outfit Idea'}</p>`;
-            html += `<p class="text-sm text-gray-500">Palette: ${item.colorPalette || 'Not specified'}</p>`;
-            
-            if (item.items && Array.isArray(item.items)) {
-                html += '<ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">';
-                item.items.forEach(clothingItem => {
-                    html += `<li>${clothingItem}</li>`;
-                });
-                html += '</ul>';
-            }
-            if (item.stylingTip) {
-                html += `<p class="mt-3 text-sm italic text-gray-600 border-l-2 border-yellow-500 pl-2">Stylist Tip: ${item.stylingTip}</p>`;
-            }
-            html += '</div>';
-        });
-
-        html += '</div>';
-        container.innerHTML += html;
-    }
-
-    // चैट कंटेनर में मैसेज दिखाता है
-    function appendMessage(sender, text, isStructured = false, rawJson = null) {
-        const messageElement = document.createElement('div');
-        const role = sender === 'user' ? 'You' : 'AI Stylist';
-        const roleClass = sender === 'user' ? 'user-message text-white self-end' : 'ai-message bg-white self-start';
-        const voice = sender === 'user' ? 'Zephyr' : 'Kore'; 
-
-        messageElement.className = `${roleClass} p-3 rounded-xl shadow-md max-w-4/5`;
-        
-        if (sender === 'user') {
-             messageElement.innerHTML = `<p class="font-semibold mb-1">You:</p><p class="whitespace-pre-wrap">${text}</p>`;
-        } else if (isStructured && rawJson) {
-            messageElement.innerHTML = `<p class="font-semibold text-[#1e3a8a] mb-1">AI Stylist:</p>`;
-            renderOutfitCard(rawJson, messageElement);
-        } else {
-            messageElement.innerHTML = `<p class="font-semibold text-[#1e3a8a] mb-1">AI Stylist:</p><p class="text-gray-700 whitespace-pre-wrap">${text}</p>`;
-        }
-        
-        // AI मैसेज के लिए TTS बटन जोड़ें
-        if (sender !== 'user' && !isStructured) {
-            const ttsContainer = document.createElement('div');
-            ttsContainer.className = "text-right mt-2";
-            ttsContainer.innerHTML = `<button onclick="speakMessage('${text.replace(/'/g, "\\'").replace(/\n/g, ' ')}', '${consultationToggle.checked ? 'multi' : voice}')" class="text-gray-500 hover:text-[#1e3a8a] transition duration-150"><svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M5.8 11a1 1 0 100 2 1 1 0 000-2z"></path></svg></button>`;
-            messageElement.appendChild(ttsContainer);
-        }
-
-        chatContainer.appendChild(messageElement);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-                }
-            // --- Core AI API Call (Gemini) ---
-    async function fetchAIResponse(userQuery, image = null) {
-        loadingIndicator.classList.remove('hidden');
-
-        const isStructuredRequest = userQuery.toLowerCase().includes('outfit idea') || userQuery.toLowerCase().includes('style suggestion') || userQuery.toLowerCase().includes('recipe');
-
-        let chatHistory = [];
-        let parts = [{ text: userQuery }];
-
-        if (image) {
-            parts.push({
-                inlineData: {
-                    mimeType: "image/png", 
-                    data: image
-                }
-            });
-        }
-        chatHistory.push({ role: "user", parts: parts });
-
-        const payload = {
-            contents: chatHistory,
-            tools: [{ "google_search": {} }],
-            systemInstruction: {
-                parts: [{ text: "You are the TUSHARA-WEAR AI Stylist. Provide concise, stylish, and realistic fashion advice tailored to menswear. Always ground your responses with Google Search for latest trends and product ideas. If an image is provided, analyze the style and suggest TUSHARA-WEAR products that match the look." }]
-            }
-        };
-
-        if (isStructuredRequest) {
-            payload.generationConfig = {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: "ARRAY",
-                    items: {
-                        type: "OBJECT",
-                        properties: {
-                            "styleName": { "type": "STRING", "description": "A short, trendy name for the outfit/style." },
-                            "colorPalette": { "type": "STRING", "description": "The main colors used in the suggested look (e.g., Navy, Beige, Off-White)." },
-                            "items": {
-                                "type": "ARRAY",
-                                "description": "A list of 3-5 clothing items and accessories for the look, specifying TUSHARA products where appropriate.",
-                                "items": { "type": "STRING" }
-                            },
-                            "stylingTip": { "type": "STRING", "description": "A quick, actionable styling tip for this outfit." }
-                        },
-                        "propertyOrdering": ["styleName", "colorPalette", "items", "stylingTip"]
-                    }
-                }
-            };
-        }
-
-        try {
-            let response;
-            for (let i = 0; i < 3; i++) { 
-                response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (response.ok) break;
-                if (response.status === 429) { await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000)); }
-                else { break; }
-            }
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            
-            const result = await response.json();
-            const candidate = result.candidates?.[0];
-
-            if (candidate && candidate.content?.parts?.[0]?.text) {
-                let aiText = candidate.content.parts[0].text;
-                let rawJson = null;
-                let isStructured = false;
-
-                if (isStructuredRequest) {
-                    try {
-                        rawJson = JSON.parse(aiText);
-                        isStructured = true;
-                    } catch (e) {
-                        console.error("Failed to parse structured JSON:", e);
-                    }
-                }
-
-                appendMessage('ai', aiText, isStructured, rawJson);
-
-            } else {
-                appendMessage('ai', "क्षमा करें, AI जवाब देने में असमर्थ रहा।");
-            }
-
-        } catch (error) {
-            console.error("AI API Error:", error);
-            appendMessage('ai', `जवाब लाते समय कोई त्रुटि हुई।`);
-        } finally {
-            loadingIndicator.classList.add('hidden');
-        }
-        }
-            // --- TTS API Call (Text-to-Speech) ---
-    window.speakMessage = async function(text, voice) {
-        if (!text) return;
-        
-        const isConsultationMode = consultationToggle.checked;
-        
-        loadingIndicator.classList.remove('hidden');
-
-        const payload = {
-            contents: [{ parts: [{ text: text }] }],
-            generationConfig: {
-                responseModalities: ["AUDIO"],
-                speechConfig: {
-                    voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } // Default Stylist Voice
-                }
-            },
-        };
-
-        // Multi-Speaker Logic
-        if (isConsultationMode) {
-            const consultationPrompt = `Read the following style consultation between two speakers (TUSHARA Stylist and Client). The stylist response is:\nStylist: ${text}`;
-            
-            payload.contents = [{ parts: [{ text: consultationPrompt }] }];
-            payload.generationConfig.speechConfig = {
-                multiSpeakerVoiceConfig: {
-                    speakerVoiceConfigs: [
-                        { speaker: "Stylist", voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } },
-                        { speaker: "Client", voiceConfig: { prebuiltVoiceConfig: { voiceName: "Zephyr" } } }
+        // --- PWA Setup Logic (Manifest and Service Worker) ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                const manifestContent = {
+                    "name": "TUSHARA-WEAR AI Stylist Pro",
+                    "short_name": "Tushara AI Pro",
+                    "description": "Your World-Class AI Fashion Stylist and Shopping Assistant",
+                    "start_url": "/TUSHARA-WEAR/",
+                    "display": "standalone",
+                    "background_color": "#ffffff",
+                    "theme_color": "#15203A",
+                    "icons": [
+                        { "src": "/TUSHARA-WEAR/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
+                        { "src": "/TUSHARA-WEAR/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
                     ]
-                }
-            };
-        }
-        
-        try {
-            let response;
-            for (let i = 0; i < 3; i++) {
-                response = await fetch(TTS_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                };
+                const manifestBlob = new Blob([JSON.stringify(manifestContent)], { type: 'application/json' });
+                const manifestUrl = URL.createObjectURL(manifestBlob);
+
+                const manifestLink = document.createElement('link');
+                manifestLink.rel = 'manifest';
+                manifestLink.href = manifestUrl;
+                document.head.appendChild(manifestLink);
+
+                const swCode = `
+                    const CACHE_NAME = 'tushara-ai-cache-v1';
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(caches.match(event.request).then(response => response || fetch(event.request)));
+                    });
+                    self.addEventListener('install', event => {
+                        event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(['/TUSHARA-WEAR/', '/TUSHARA-WEAR/index.html'])));
+                    });
+                    self.addEventListener('activate', event => event.waitUntil(clients.claim()));
+                `;
+                const swBlob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(swBlob);
+
+                navigator.serviceWorker.register(swUrl, { scope: '/TUSHARA-WEAR/' }).then(registration => {
+                    console.log('Service Worker registered successfully:', registration);
+                }).catch(error => {
+                    console.error('Service Worker registration failed:', error);
                 });
-                if (response.ok) break;
-                if (response.status === 429) { await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000)); } 
-                else { break; }
-            }
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-            const result = await response.json();
-            const part = result?.candidates?.[0]?.content?.parts?.[0];
-            const audioData = part?.inlineData?.data;
-            const mimeType = part?.inlineData?.mimeType;
-
-            if (audioData && mimeType && mimeType.startsWith("audio/")) {
-                const rateMatch = mimeType.match(/rate=(\d+)/);
-                const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
-                
-                const pcmData = base64ToArrayBuffer(audioData);
-                const pcm16 = new Int16Array(pcmData);
-                const wavBlob = pcmToWav(pcm16, sampleRate, mimeType);
-                
-                const audioUrl = URL.createObjectURL(wavBlob);
-                const audio = new Audio(audioUrl);
-                audio.play();
-                
-            } else {
-                console.error("TTS Error: Audio data missing or invalid.", result);
-            }
-
-        } catch (error) {
-            console.error("TTS API Error:", error);
-        } finally {
-            loadingIndicator.classList.add('hidden');
+            });
         }
+
+        // --- Utility Functions for TTS (PCM to WAV conversion) ---
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
         }
-            // --- Main Send Message Function ---
-    async function sendMessage() {
-        const query = userInput.value.trim();
-        if (!query && !base64Image) return;
 
-        // 1. Display user message
-        appendMessage('user', query);
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
 
-        // 2. Clear input
-        userInput.value = '';
-        removeImage(); 
+        function pcmToWav(pcm16, sampleRate, mimeType) {
+            const buffer = new ArrayBuffer(44 + pcm16.length * 2);
+            const view = new DataView(buffer);
+            // WAV header creation
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + pcm16.length * 2, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true); 
+            view.setUint16(22, 1, true); 
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true); 
+            view.setUint16(32, 2, true); 
+            view.setUint16(34, 16, true); 
+            writeString(view, 36, 'data');
+            view.setUint32(40, pcm16.length * 2, true);
+            let offset = 44;
+            for (let i = 0; i < pcm16.length; i++) {
+                view.setInt16(offset, pcm16[i], true);
+                offset += 2;
+            }
+            return new Blob([view], { type: 'audio/wav' });
+        }
 
-        // 3. Get AI response
-        await fetchAIResponse(query, base64Image);
+        // --- Message Handling Functions ---
+        function handleKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); 
+                sendMessage();
+            }
+        }
+
+        function removeImage() {
+            base64Image = null;
+            imageUpload.value = '';
+            imagePreview.classList.add('hidden');
+            previewImg.src = '';
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    base64Image = e.target.result.split(',')[1];
+                    previewImg.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
         
-        // 4. Ensure image is cleared after sending
-        base64Image = null;
-    }
-</script>
-</body>
-</html>
+        // Renders the structured data from the AI as a Style Recipe Card
+        function renderOutfitCard(cardData, container) {
+            const items = Array.isArray(cardData) ? cardData : [cardData];
+
+            let html = '<div class="bg-primary-dark text-white p-4 rounded-xl shadow-xl mt-3">';
+            html += '<h3 class="text-xl font-bold mb-3 border-b border-gray-600 pb-2 flex items-center">TUSHARA Style Recipe Pro <span class="ml-2 bg-yellow-400 text-primary-dark text-xs font-extrabold px-2 py-0.5 rounded-full shadow-md">ADVANCED</span></h3>';
+            
+            items.forEach((item, index) => {
+                html += `<div class="${index > 0 ? 'mt-4 pt-4 border-t border-gray-700' : ''}">`;
+                html += `<p class="font-semibold text-gray-200 text-lg">${item.styleName || 'Outfit Idea'}</p>`;
+                html += `<p class="text-sm text-gray-400">Color Palette: ${item.colorPalette || 'Not Specified'}</p>`;
+                
+                // --- TUSHARA FitScore Display ---
+                if (item.fitScore) {
+                    const scoreColor = item.fitScore >= 80 ? 'text-green-400' : (item.fitScore >= 60 ? 'text-yellow-400' : 'text-red-400');
+                    html += `<div class="mt-2 p-2 rounded-lg bg-[#273555]">`;
+                    html += `<p class="text-sm font-bold flex items-center"><span class="text-yellow-400 mr-2">⭐</span> TUSHARA FitScore: <span class="${scoreColor} ml-1">${item.fitScore}/100</span></p>`;
+                    html += `<p class="text-xs text-gray-400 mt-1">${item.fitReason || 'Body type analysis shows this fit is ideal.'}</p>`;
+                    html += `</div>`;
+                }
+
+                if (item.items && Array.isArray(item.items)) {
+                    html += '<p class="font-medium mt-3 mb-1">Items:</p>';
+                    html += '<ul class="list-disc list-inside text-sm text-white space-y-1 ml-4">';
+                    item.items.forEach(clothingItem => {
+                        html += `<li>${clothingItem}</li>`;
+                    });
+                    html += '</ul>';
+                }
+
+                if (item.stylingTip) {
+                    html += `<p class="mt-4 text-sm italic text-gray-300 border-l-4 border-yellow-400 pl-3">Stylist Tip: ${item.stylingTip}</p>`;
+                }
+                
+                // --- TUSHARA Green Sustainability Note ---
+                if (item.sustainabilityNote) {
+                    html += `<div class="mt-4 p-3 rounded-lg bg-green-900 bg-opacity-30 border border-green-700">`;
+                    html += `<p class="text-sm font-bold flex items-center text-green-400"><span class="mr-2">🌱</span> TUSHARA Green Note:</p>`;
+                    html += `<p class="text-xs text-gray-300 mt-1">${item.sustainabilityNote}</p>`;
+                    html += `</div>`;
+                }
+                
+                html += '</div>';
+            });
+
+            html += '</div>';
+            container.innerHTML += html;
+        }
+
+        // Displays the message in the chat container
+        function appendMessage(sender, text, isStructured = false, rawJson = null) {
+            const messageElement = document.createElement('div');
+            const role = sender === 'user' ? 'You' : 'AI Stylist Pro';
+            const roleClass = sender === 'user' 
+                ? 'bg-blue-600 text-white self-end rounded-t-xl rounded-bl-xl shadow-lg user-message' 
+                : 'ai-message-card bg-white self-start rounded-t-xl rounded-br-xl shadow-xl';
+            const voice = sender === 'user' ? 'Zephyr' : 'Kore'; 
+
+            messageElement.className = `${roleClass} p-4 max-w-[85%] md:max-w-[60%]`;
+            
+            if (sender === 'user') {
+                 messageElement.innerHTML = `<p class="font-semibold mb-1">${role}:</p><p class="whitespace-pre-wrap">${text}</p>`;
+            } else if (isStructured && rawJson) {
+                messageElement.innerHTML = `<p class="font-bold text-lg text-primary-dark mb-1">${role}:</p>`;
+                renderOutfitCard(rawJson, messageElement);
+            } else {
+                messageElement.innerHTML = `<p class="font-bold text-lg text-primary-dark mb-1">${role}:</p><p class="text-gray-700 whitespace-pre-wrap">${text}</p>`;
+            }
+            
+            // Add TTS button for AI messages
+            if (sender !== 'user' && !isStructured) {
+                const ttsContainer = document.createElement('div');
+                ttsContainer.className = "text-right mt-3";
+                // The speaker button calls the speakMessage function with the full text
+                ttsContainer.innerHTML = `<button onclick="speakMessage('${text.replace(/'/g, "\\'").replace(/\n/g, ' ')}', '${consultationToggle.checked ? 'multi' : voice}')" class="text-gray-500 hover:text-primary-dark transition duration-150 p-1 rounded-full hover:bg-gray-100">
+                    <svg class="w-6 h-6 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M5.8 11a1 1 0 100 2 1 1 0 000-2z"></path></svg>
+                </button>`;
+                messageElement.appendChild(ttsContainer);
+            }
+
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Mock function to determine body type and context based on image presence (for demo)
+        function getBodyTypeAndContext(hasImage) {
+            // In a real app, this would be an ML model call. Here it's a mock.
+            const bodyTypes = ["Athletic/V-Shape", "Rectangular", "Oval/Apple", "Trapezoid"];
+            const bodyType = hasImage ? bodyTypes[Math.floor(Math.random() * bodyTypes.length)] : bodyTypes[1]; // Default to Rectangular if no image
+
+            // Mock Contextual Weather/Mood
+            const weather = ["Sunny and Warm", "Light Rain", "Cool and Windy", "Pleasant"];
+            const context = {
+                bodyType: bodyType,
+                weather: weather[Math.floor(Math.random() * weather.length)],
+                mood: "professional yet comfortable"
+            };
+            return context;
+        }
+
+        // --- Core AI API Call (Gemini) ---
+        async function fetchAIResponse(userQuery, image = null) {
+            loadingIndicator.classList.remove('hidden');
+            const context = getBodyTypeAndContext(!!image); // Get dynamic context
+
+            // Check if the request should return a structured JSON (Outfit Recipe Card)
+            const isStr            
