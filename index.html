@@ -1,81 +1,378 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUSHARA-MAN'S WEAR | Home - Advanced E-commerce</title>
-    
-    <link rel="stylesheet" href="Style.css"> 
-    <meta name="description" content="TUSHARA-WEAR: Advanced online store for men's wear. Full AI features, unique designs.">
-    <meta name="keywords" content="tushara wear, advanced fashion, online clothing, men's wear, latest trends">
-</head> <link rel="manifest" href="/TUSHARA-WEAR/manifest.json">
-<body>
-    
-    <header>
-        <nav>
-            <a href="index.html" class="brand-logo">TUSHARA-WEAR</a> 
-            <a href="index.html">Home</a> 
-            <a href="products.html">Shop / Products</a>
-            <a href="contact.html">Contact Us</a> 
-        </nav>
+    <title>TUSHARA-WEAR AI सहायक ऐप</title>
+    <!-- Tailwind CSS लोड करें -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* ब्रांडिंग और स्क्रॉलबार के लिए कस्टम स्टाइल */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+        .chat-container {
+            max-height: calc(100vh - 160px); /* इनपुट और हेडर के लिए ऊंचाई समायोजित करें */
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        /* Tushara ब्रांड रंग */
+        .brand-bg {
+            background-color: #1e3a8a; /* गहरा नीला */
+        }
+        .brand-text-accent {
+            color: #f59e0b; /* एम्बर/गोल्ड एक्सेंट */
+        }
+        .brand-bg-accent {
+            background-color: #f59e0b;
+        }
+        .user-message {
+            background-color: #e5e7eb;
+            color: #1f2937;
+        }
+        .ai-message {
+            background-color: #1e3a8a;
+            color: white;
+        }
+    </style>
+    <!-- PWA मैनिफेस्ट और थीम सेटिंग्स (कोड में डायनामिक रूप से रजिस्टर होंगी) -->
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- हेडर (Header) -->
+    <header class="brand-bg text-white p-4 shadow-lg sticky top-0 z-10">
+        <h1 class="text-xl font-bold">TUSHARA-WEAR AI <span class="brand-text-accent">सहायक</span></h1>
+        <p class="text-sm opacity-80">हमारे उत्पादों, स्टाइल या फैशन के बारे में कोई भी प्रश्न पूछें।</p>
     </header>
-    
-    <div class="hero-section">
-        <img src="ChatGPT Image Dec 2, 2025, 01_05_41 AM (1).png" alt="TUSHARA-WEAR Launch Banner" class="hero-image">
-        
-        <div class="hero-text">
-            <h1>TUSHARA-WEAR: Full Advanced Style</h1>
-            <p>Aapke liye sabse anokhe aur aaraamdeh kapde.</p>
-            <a href="products.html" class="cta-button">Shop Now</a>
-        </div>
-    </div>
-    
-    <div class="container">
-        <h2>🔥 Trending Now: Executive Collection</h2>
 
-        <section class="featured-collections">
-            
-            <div class="product-card">
-                <img src="shirt_front.jpg" alt="Executive Oxford Shirt" 
-                     onmouseover="this.src='shirt_back.jpg'" 
-                     onmouseout="this.src='shirt_front.jpg'"> 
-                <h3>Executive Oxford Shirt</h3>
-                <p>Premium Cotton Blend. Price: ₹2,499</p>
-                <a href="contact.html" class="cta-button">Buy Now</a>
+    <!-- मुख्य चैट डिस्प्ले क्षेत्र (Main Chat Display Area) -->
+    <main class="flex-grow p-4 md:p-6 pb-20">
+        <div id="chat-container" class="chat-container space-y-4">
+            <!-- शुरुआती स्वागत संदेश -->
+            <div class="flex justify-start">
+                <div class="ai-message p-3 rounded-xl rounded-tl-none max-w-xs md:max-w-md shadow-md">
+                    👋 **नमस्ते!** मैं TUSHARA-WEAR का AI असिस्टेंट हूँ। अपनी स्टाइलिंग की ज़रूरतों या किसी भी फैशन ट्रेंड के बारे में पूछें।
+                </div>
             </div>
-            
-             <div class="product-card">
-                <img src="jeans_front.jpg" alt="Aero Slim Fit Denim"
-                     onmouseover="this.src='jeans_back.jpg'" 
-                     onmouseout="this.src='jeans_front.jpg'"> 
-                <h3>Aero Slim Fit Denim</h3>
-                <p>Comfortable stretch fabric. Price: ₹1,999</p>
-                <a href="contact.html" class="cta-button">Buy Now</a>
-            </div>
-
-        </section>
-        
-        <a href="products.html" class="cta-button" style="margin-top: 30px;">View All Products</a>
-    </div>
-    
-    <footer>
-        <div class="container footer-content">
-            <p>📞 Contact: +91 75669 97766 | 📧 Email: support@tushara-wear.com</p> 
-            <p>&copy; 2025 TUSHARA-WEAR. All rights reserved. | Developed by Tushar</p>
+            <!-- संदेश यहाँ डाले जाएँगे -->
         </div>
-    </footer>
+        
+        <!-- लोडिंग इंडिकेटर -->
+        <div id="loading-indicator" class="hidden flex justify-start mt-4">
+            <div class="p-3 bg-gray-200 rounded-xl rounded-tl-none max-w-xs md:max-w-md shadow-md">
+                <div class="flex space-x-1">
+                    <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: -0.32s;"></div>
+                    <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: -0.16s;"></div>
+                    <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                </div>
+            </div>
+        </div>
+    </main>
 
-    <script src="Script.js"></script> 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/TUSHARA-WEAR/service-worker.js').then(function(registration) {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      }, function(err) {
-        console.log('ServiceWorker registration failed: ', err);
-      });
-    });
-  }
+    <!-- इनपुट क्षेत्र (Input Area - Sticky Footer) -->
+    <div class="fixed bottom-0 left-0 w-full bg-white p-4 shadow-2xl z-20">
+        <div class="flex space-x-3 max-w-4xl mx-auto">
+            <input 
+                type="text" 
+                id="user-input" 
+                placeholder="अपना प्रश्न यहाँ टाइप करें..." 
+                class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f59e0b] focus:border-[#f59e0b]"
+                onkeydown="if(event.key === 'Enter') document.getElementById('send-btn').click();"
+            >
+            <button 
+                id="send-btn" 
+                onclick="sendMessage()" 
+                class="brand-bg-accent text-white p-3 rounded-lg font-semibold shadow-md hover:bg-yellow-600 transition duration-150 flex items-center justify-center disabled:opacity-50"
+            >
+                भेजें
+            </button>
+        </div>
+        <p id="status-message" class="text-xs text-gray-500 mt-2 text-center hidden">AI सहायक टाइप कर रहा है...</p>
+    </div>
+
+    <!-- JavaScript लॉजिक: AI, PWA और चैटिंग के लिए -->
+    <script>
+        // --- 1. AI कॉन्फ़िगरेशन और स्थिति (AI Configuration and State) ---
+        const API_KEY = ""; // Key खाली रखें, Canvas इसे अपने आप प्रदान करेगा
+        const MODEL = 'gemini-2.5-flash-preview-09-2025';
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
+        
+        let chatHistory = [];
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-btn');
+        const statusMessage = document.getElementById('status-message');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        
+        const systemInstruction = "TUSHARA-WEAR के विशेषज्ञ ग्राहक सेवा प्रतिनिधि और फैशन स्टाइलिस्ट के रूप में कार्य करें। संक्षिप्त, मैत्रीपूर्ण और सहायक सलाह प्रदान करें। नवीनतम जानकारी के लिए Google Search का उपयोग करके फैशन ट्रेंड्स पर जानकारी दें, लेकिन हमेशा इसे पुरुषों के कपड़ों और स्टाइल से जोड़ें। हिंदी (देवनागरी) में जवाब दें।";
+
+        // --- Utility Functions ---
+
+        /** चैट कंटेनर को नीचे तक स्क्रॉल करता है। */
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        /** चैट कंटेनर में संदेश बबल बनाता है और जोड़ता है। */
+        function appendMessage(role, text, sources = []) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+
+            const messageBubble = document.createElement('div');
+            messageBubble.className = `p-3 rounded-xl max-w-xs md:max-w-md shadow-md transition-all duration-300 ${
+                role === 'user' 
+                    ? 'user-message rounded-br-none' 
+                    : 'ai-message rounded-tl-none'
+            }`;
+            messageBubble.innerHTML = role === 'user' ? text : formatMarkdown(text);
+            
+            messageWrapper.appendChild(messageBubble);
+
+            if (sources.length > 0 && role !== 'user') {
+                const sourcesDiv = document.createElement('div');
+                sourcesDiv.className = 'text-xs mt-1 p-2 bg-gray-100 rounded-lg border border-gray-200 text-black';
+                sourcesDiv.innerHTML = '<strong>🔍 स्रोत:</strong><ul class="list-disc ml-4 mt-1 space-y-0.5">' + 
+                    sources.map(s => `<li><a href="${s.uri}" target="_blank" class="text-blue-600 hover:underline">${s.title || s.uri}</a></li>`).join('') +
+                    '</ul>';
+                messageWrapper.appendChild(sourcesDiv);
+            }
+
+            chatContainer.appendChild(messageWrapper);
+            scrollToBottom();
+        }
+
+        /** AI रिस्पॉन्स फ़ॉर्मेटिंग के लिए साधारण मार्कडाउन को HTML में बदलता है। */
+        function formatMarkdown(text) {
+            // बोल्ड (**text** or *text*)
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+            // नई लाइन को ब्रेक में बदलें
+            text = text.replace(/\n/g, '<br>');
+            return text;
+        }
+
+        // --- 2. AI इंटरैक्शन मुख्य लॉजिक (AI Interaction Core Logic) ---
+
+        /** Gemini API को उपयोगकर्ता का संदेश भेजता है। */
+        async function fetchAIResponse(userQuery) {
+            
+            // पेलोड के लिए उपयोगकर्ता प्रश्न को इतिहास में जोड़ें
+            chatHistory.push({ role: "user", parts: [{ text: userQuery }] });
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                
+                // नवीनतम जानकारी के लिए Google Search ग्राउंडिंग सक्षम करें
+                tools: [{ "google_search": {} }], 
+                
+                systemInstruction: {
+                    parts: [{ text: systemInstruction }]
+                },
+            };
+
+            let response;
+            let result;
+            let delay = 1000;
+            const maxRetries = 3;
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) {
+                        // बहुत अधिक अनुरोध - घातीय बैकऑफ़
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                        continue; 
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`API ने स्थिति ${response.status} वापस की`);
+                    }
+
+                    result = await response.json();
+                    break; // सफलता, लूप से बाहर निकलें
+
+                } catch (error) {
+                    // console.error("Fetch प्रयास विफल:", error); // डीबगिंग के लिए छोड़ दिया
+                    if (i === maxRetries - 1) {
+                        throw new Error("कई प्रयासों के बाद भी प्रतिक्रिया प्राप्त करने में विफल रहा।");
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+            
+            if (!result || !result.candidates || result.candidates.length === 0) {
+                 throw new Error("API से अमान्य प्रतिक्रिया संरचना।");
+            }
+
+            const candidate = result.candidates[0];
+            const text = candidate.content?.parts?.[0]?.text || "क्षमा करें, मैं उस अनुरोध को संसाधित नहीं कर सका।";
+
+            let sources = [];
+            const groundingMetadata = candidate.groundingMetadata;
+            if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                sources = groundingMetadata.groundingAttributions
+                    .map(attribution => ({
+                        uri: attribution.web?.uri,
+                        title: attribution.web?.title,
+                    }))
+                    .filter(source => source.uri); 
+            }
+
+            // AI प्रतिक्रिया को इतिहास में जोड़ें
+            chatHistory.push({ role: "model", parts: [{ text: text }] });
+            
+            return { text, sources };
+        }
+
+        /** संदेश भेजने और UI को अपडेट करने को संभालता है। */
+        async function sendMessage() {
+            const query = userInput.value.trim();
+            if (!query) return;
+
+            // 1. उपयोगकर्ता संदेश के लिए UI अपडेट
+            appendMessage('user', query);
+            userInput.value = '';
+            userInput.disabled = true;
+            sendButton.disabled = true;
+            statusMessage.classList.remove('hidden');
+            loadingIndicator.classList.remove('hidden');
+            scrollToBottom();
+
+            try {
+                // 2. AI प्रतिक्रिया प्राप्त करें
+                const { text, sources } = await fetchAIResponse(query);
+                
+                // 3. AI प्रतिक्रिया के लिए UI अपडेट
+                appendMessage('ai', text, sources);
+
+            } catch (error) {
+                console.error("Gemini API त्रुटि:", error);
+                appendMessage('ai', `**त्रुटि:** AI को एक समस्या आई: ${error.message}। कृपया पुनः प्रयास करें।`);
+            } finally {
+                // 4. UI रीसेट करें
+                userInput.disabled = false;
+                sendButton.disabled = false;
+                statusMessage.classList.add('hidden');
+                loadingIndicator.classList.add('hidden');
+                userInput.focus();
+            }
+        }
+
+        // --- 3. PWA सेटअप (डायनामिक सर्विस वर्कर पंजीकरण) ---
+        
+        /** सर्विस वर्कर फ़ाइल की सामग्री, एक फ़ंक्शन के रूप में परिभाषित। */
+        function getServiceWorkerContent() {
+            const CACHE_NAME = 'tushara-wear-cache-v1';
+            // ऑफ़लाइन उपयोग के लिए कैश की जाने वाली फ़ाइलों की सूची
+            const urlsToCache = [
+                '/TUSHARA-WEAR/',
+                '/TUSHARA-WEAR/index.html',
+                'https://cdn.tailwindcss.com', 
+            ];
+
+            // सर्विस वर्कर लॉजिक
+            return `
+                const CACHE_NAME = '${CACHE_NAME}';
+                const urlsToCache = [${urlsToCache.map(url => `'${url}'`).join(', ')}];
+
+                self.addEventListener('install', event => {
+                    console.log('[Service Worker] Installing...');
+                    event.waitUntil(
+                        caches.open(CACHE_NAME)
+                            .then(cache => cache.addAll(urlsToCache))
+                            .catch(err => console.error('Cache addAll failed:', err))
+                    );
+                });
+
+                self.addEventListener('fetch', event => {
+                    event.respondWith(
+                        caches.match(event.request).then(response => {
+                            return response || fetch(event.request);
+                        })
+                    );
+                });
+
+                self.addEventListener('activate', event => {
+                    const cacheWhitelist = [CACHE_NAME];
+                    event.waitUntil(
+                        caches.keys().then(cacheNames => {
+                            return Promise.all(
+                                cacheNames.map(cacheName => {
+                                    if (cacheWhitelist.indexOf(cacheName) === -1) {
+                                        return caches.delete(cacheName);
+                                    }
+                                })
+                            );
+                        })
+                    );
+                });
+            `;
+        }
+
+        /** PWA सर्विस वर्कर को डायनामिक रूप से रजिस्टर करें। */
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    try {
+                        // सर्विस वर्कर सामग्री से Blob बनाएँ
+                        const swContent = getServiceWorkerContent();
+                        const swBlob = new Blob([swContent], { type: 'application/javascript' });
+                        const swUrl = URL.createObjectURL(swBlob);
+
+                        // सर्विस वर्कर रजिस्टर करें
+                        navigator.serviceWorker.register(swUrl, { scope: '/TUSHARA-WEAR/' })
+                            .then(registration => {
+                                console.log('PWA ServiceWorker registered successfully:', registration.scope);
+                            })
+                            .catch(error => {
+                                console.error('PWA ServiceWorker registration failed:', error);
+                            });
+                        
+                        // मैनिफेस्ट को डायनामिक रूप से सेट करें (आइकन प्लेसहोल्डर का उपयोग करके)
+                        const manifest = {
+                            "name": "TUSHARA-WEAR",
+                            "short_name": "Tushara",
+                            "description": "TUSHARA Menswear - AI Assistant PWA",
+                            "start_url": "/TUSHARA-WEAR/",
+                            "display": "standalone",
+                            "background_color": "#ffffff",
+                            "theme_color": "#1e3a8a",
+                            "icons": [
+                                { "src": "https://placehold.co/192x192/1e3a8a/ffffff?text=T", "sizes": "192x192", "type": "image/png" },
+                                { "src": "https://placehold.co/512x512/1e3a8a/ffffff?text=T", "sizes": "512x512", "type": "image/png" }
+                            ]
+                        };
+                        const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+                        const manifestUrl = URL.createObjectURL(manifestBlob);
+                        
+                        const link = document.createElement('link');
+                        link.rel = 'manifest';
+                        link.href = manifestUrl;
+                        document.head.appendChild(link);
+                        
+                    } catch (e) {
+                        console.error("PWA सेटअप त्रुटि:", e);
+                    }
+                });
+            }
+        }
+
+        // विंडो लोड होने पर PWA को इनिशियलाइज़ करें
+        registerServiceWorker();
     </script>
+
 </body>
 </html>
+
+    
