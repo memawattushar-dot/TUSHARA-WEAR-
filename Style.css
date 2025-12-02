@@ -1,211 +1,76 @@
-/* Basic Reset */
-* {
+/*
+ * TUSHARA-WEAR: Advanced Style Sheet
+ * Professional & Responsive Design
+ */
+
+/* --- 1. Global Reset & Typography --- */
+body {
+    font-family: 'Arial', sans-serif; /* Modern, clean font */
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    background-color: #f0f0f5; /* Light grey/off-white background */
+    color: #333;
+    line-height: 1.6;
 }
 
-body {
-    font-family: 'Helvetica Neue', Arial, sans-serif; /* Thoda professional font */
-    line-height: 1.6;
-    color: #222;
-    background-color: #f9f9f9; 
+h1, h2, h3 {
+    color: #1a1a1a;
+    font-weight: 700;
 }
 
 .container {
     width: 90%;
     max-width: 1200px;
-    margin: auto;
-    overflow: hidden;
+    margin: 0 auto;
+    padding: 20px 0;
 }
 
-/* Header */
+/* --- 2. Navigation Bar (Header) --- */
 header {
-    background: #1a1a1a; /* Darker, modern header */
-    color: #fff;
-    padding-top: 20px;
-    min-height: 70px;
-    border-bottom: #FFC107 3px solid; /* Gold Accent */
+    background-color: #1a1a1a; /* Deep Black Header */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
 }
 
-header h1 {
-    float: left;
-    font-size: 24px;
-}
-header nav {
-    float: right;
-    margin-top: 10px;
-}
-header a {
-    color: #fff;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-size: 14px;
-    padding: 0 15px;
-    letter-spacing: 1px;
-}
-
-/* Hero Section */
-.hero {
-    background: #FFC107; /* Gold Yellow */
-    color: #1a1a1a; /* Dark text on bright background */
-    padding: 100px 0;
-    text-align: center;
-}
-
-.hero h2 {
-    margin-bottom: 10px;
-    font-size: 48px;
-}
-.hero p {
-    font-size: 18px;
-    margin-bottom: 20px;
-}
-
-/* Shop Now Button */
-.btn {
-    display: inline-block;
-    background: #1a1a1a;
-    color: #FFC107;
-    padding: 12px 25px;
-    text-decoration: none;
-    border-radius: 5px;
-    margin-top: 20px;
-    font-weight: bold;
-}
-
-/* Products Section */
-.products {
-    padding: 40px 0;
-    text-align: center;
-}
-
-.product-grid {
-    display: flex; 
-    justify-content: space-around;
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.product-card {
-    flex: 1;
-    background: #fff;
-    padding: 20px;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Better shadow */
-}
-
-.product-card h4 {
-    margin-bottom: 10px;
-}
-
-.btn-small {
-    display: inline-block;
-    color: #1a1a1a;
-    text-decoration: none;
-    border: 1px solid #1a1a1a;
-    padding: 8px 15px;
-    margin-top: 15px;
-    font-size: 14px;
-}
-
-/* Footer */
-footer {
-    background: #333;
-    color: #fff;
-    text-align: center;
-    padding: 20px 0;
-    margin-top: 40px;
-}
-/* --- Launch Banner Styling --- */
-.launch-banner {
-    padding: 20px 0;
-    text-align: center;
-    background-color: #f0f0f0; /* Optional: Halka background */
-}
-
-.responsive-banner {
-    max-width: 100%; /* Banner ko screen size ke hisaab se adjust karega */
-    height: auto;   /* Aspect ratio maintain rakhega */
-    border-radius: 8px; /* Halki golai edges par */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Halka shadow */
-}
-/* Style.css */
-.product-image {
-    transition: transform 0.3s ease; /* Animation smooth karta hai */
-}
-
-.product-image:hover {
-    transform: scale(1.05); /* Image ko 5% bada karega */
-}
-/* Style.css mein yeh code daalein */
-
-/* Navigation Bar ka background set karna */
 nav {
-    background-color: #333; /* Dark background */
-    padding: 15px;
-    text-align: center;
-}
-
-/* Links ko style karna */
-nav a {
-    color: white; /* Text white hoga */
-    text-decoration: none; /* Link ke neeche ki line hat jaayegi */
-    padding: 15px 20px;
-    margin: 0 10px;
-    font-size: 18px;
-    transition: background-color 0.3s;
-}
-
-/* Jab mouse link par le jaayega (hover), toh rang badlega */
-nav a:hover {
-    background-color: #555;
-    border-radius: 5px;
-    }
-/* Style.css mein yeh saara code daalein */
-
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4; /* Light grey background */
-}
-
-/* --- Navigation Bar --- */
-nav {
-    background-color: #1a1a1a; /* Dark background */
-    padding: 15px;
     text-align: center;
 }
 
 nav a {
     color: white;
     text-decoration: none;
-    padding: 15px 20px;
-    margin: 0 10px;
-    font-size: 18px;
-    transition: background-color 0.3s, transform 0.3s; /* Smooth animation */
+    padding: 12px 25px;
+    margin: 0 8px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 4px;
 }
 
 nav a:hover {
-    background-color: #4a4a4a;
-    border-radius: 5px;
-    transform: scale(1.05); /* Thoda zoom */
+    background-color: #ff6600; /* Bright Orange Hover Effect */
+    color: #1a1a1a;
 }
 
-/* --- Hero Section (Banner) --- */
+/* --- 3. Hero Section (Banner) --- */
 .hero-section {
     position: relative;
     text-align: center;
     color: white;
-    margin-bottom: 30px;
+    height: 450px; /* Thoda Bada Banner */
+    overflow: hidden;
 }
 
 .hero-image {
     width: 100%;
-    height: 400px;
+    height: 100%;
     object-fit: cover;
-    opacity: 0.7; /* Image ko halka sa dark karna */
+    opacity: 0.8; /* Image ko halka sa dark karna */
+    transition: transform 0.5s ease;
+}
+
+.hero-section:hover .hero-image {
+    transform: scale(1.05); /* Mouse le jaane par halka zoom */
 }
 
 .hero-text {
@@ -213,50 +78,92 @@ nav a:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.6);
-    padding: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 30px;
     border-radius: 10px;
+    max-width: 90%;
 }
 
-/* --- Buttons --- */
+.hero-text h1 {
+    color: white;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+/* --- 4. Call-to-Action Buttons (CTA) --- */
 .cta-button {
     display: inline-block;
     background-color: #ff6600; /* Bright orange button */
     color: white;
-    padding: 10px 20px;
+    padding: 12px 30px;
     text-decoration: none;
-    border-radius: 5px;
-    margin-top: 15px;
-    transition: background-color 0.3s;
+    border-radius: 50px; /* Gol Kinare */
+    margin-top: 20px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: none;
+    cursor: pointer;
 }
 
 .cta-button:hover {
     background-color: #e65c00;
+    transform: translateY(-2px); /* Click hone jaisa effect */
 }
 
-/* --- Products Page Container --- */
-.products-container {
+/* --- 5. Product Cards (Featured Collections & Products Page) --- */
+.featured-collections {
     text-align: center;
-    padding: 20px;
+    padding: 40px 0;
 }
 
+/* Products ko side-by-side dikhane ke liye (Grid-like effect) */
 .product-card {
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 20px;
-    margin: 20px;
     display: inline-block;
-    width: 300px;
-    transition: box-shadow 0.3s;
+    width: 45%; /* Desktop par do cards, mobile par ek */
+    margin: 15px 1.5%;
+    padding: 20px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Gehra Shadow */
+    vertical-align: top;
+    background-color: white;
+    border-radius: 8px;
+    text-align: center;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .product-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px); /* Upar uthne ka effect */
 }
 
 .product-card img {
     width: 100%;
     height: auto;
+    max-height: 250px;
     object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 15px;
 }
-    
+
+/* --- 6. Footer --- */
+footer {
+    background-color: #1a1a1a;
+    color: #f0f0f5;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+}
+
+/* --- 7. Responsiveness (Mobile Fix) --- */
+@media (max-width: 768px) {
+    /* Chhote screen par 100% width tak faila do */
+    .product-card {
+        width: 90%; 
+        display: block;
+        margin: 15px auto;
+    }
+
+    .hero-text h1 {
+        font-size: 1.8em;
+    }
+}
+  
