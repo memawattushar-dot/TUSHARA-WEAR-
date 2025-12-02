@@ -3,350 +3,437 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUSHARA-WEAR AI Stylist Pro</title>
-    <!-- Tailwind CSS (For responsive and modern design) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>TUSHARA AGI Assistant - The World's Most Advanced AI Stylist</title>
+    
+    <link rel="manifest" href="manifest.json">
+    
     <style>
-        /* Custom styles for premium branding and scrollbar */
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #e5e7eb; /* Light Gray Background */
-        }
-        .chat-container { 
-            max-height: calc(100vh - 120px); 
-            overflow-y: auto; 
-            scroll-behavior: smooth; 
-        }
-        /* TUSHARA-WEAR Premium Navy Color */
-        .primary-dark { background-color: #15203A; } 
-        .text-primary-dark { color: #15203A; }
-        .border-primary-dark { border-color: #15203A; }
-
-        /* Custom AI Message Card Style */
-        .ai-message-card { 
-            border: 1px solid #d1d5db; 
-            background-color: #ffffff;
-            transition: transform 0.2s;
-        }
-        .ai-message-card:hover {
-             transform: translateY(-2px);
-             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        /* General Setup */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        /* Simple Loader style */
-        .loader { border-left-color: #15203A; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* Custom Scrollbar for better UX */
-        .chat-container::-webkit-scrollbar { width: 8px; }
-        .chat-container::-webkit-scrollbar-thumb { background-color: #15203A; border-radius: 4px; }
-        .chat-container::-webkit-scrollbar-track { background-color: #f3f4f6; }
-        
-        /* User Message Style */
-        .user-message {
-            background-color: #3b82f6; /* Blue-600 */
+        /* Full App Container */
+        .stylist-container {
+            width: 90%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-top: 5px solid #1a237e;
+            display: none; /* Initially hidden */
+            flex-direction: column;
+            height: 90vh; 
+        }
+
+        /* --- Login Screen Styles --- */
+        #login-screen {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 350px;
+        }
+
+        #login-screen h2 {
+            color: #1a237e;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        #login-screen input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        #login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #00897b;
             color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Header & Chat Styles */
+        .header {
+            padding: 15px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .header .app-logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 5px;
+        }
+        .header h1 {
+            color: #1a237e;
+            font-size: 20px;
+            margin: 0;
+            font-weight: 800;
+        }
+        .header p {
+            color: #757575;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+        }
+        .message-bubble {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background-color: #3f51b5;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        .ai-message-bubble {
+            background-color: #ffffff;
+            color: #333;
+            margin-right: auto;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+        }
+
+        /* New Photo/Mode Controls */
+        .advanced-controls {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background-color: #f0f0f0;
+            border-top: 1px solid #eee;
+        }
+        
+        #file-upload {
+            display: none;
+        }
+
+        .upload-label, .mode-btn {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            border: 1px solid #ccc;
+        }
+
+        .upload-label {
+            background-color: #ff9800; 
+            color: white;
+        }
+
+        .mode-btn {
+            background-color: #4caf50; 
+            color: white;
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+        
+        .upload-label:hover {background-color: #e68900;}
+        .mode-btn:hover {background-color: #43a047;}
+
+        #image-preview-container {
+            display: none;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            background-color: #fff;
+        }
+        #image-preview {
+            max-height: 100px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        
+        /* Input Area */
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            flex-shrink: 0;
+        }
+        #user-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        #send-btn {
+            background-color: #00897b;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 </head>
-<body class="flex flex-col h-screen">
-
-    <!-- Header / Nav Bar (Premium Look) -->
-    <header class="bg-white shadow-lg p-4 flex justify-between items-center sticky top-0 z-10 border-b border-gray-200">
-        <div class="text-3xl font-extrabold text-primary-dark tracking-wide">TUSHARA AI Pro</div>
-        <!-- Consultation Mode Toggle -->
-        <div class="flex items-center space-x-2">
-            <span class="text-sm font-medium text-gray-700">Consultation Mode:</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="consultation-mode-toggle" class="sr-only peer">
-                <!-- Customized Toggle Switch -->
-                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#15203A]"></div>
-            </label>
-        </div>
-    </header>
-
-    <!-- Chat Messages Container -->
-    <div id="chat-container" class="chat-container flex-grow p-4 space-y-4 overflow-y-auto">
-        <!-- Initial Welcome Message -->
-        <div class="ai-message-card p-4 rounded-xl shadow-lg max-w-4/5 mx-auto md:max-w-3xl bg-white self-start">
-            <p class="font-bold text-lg text-primary-dark">AI Stylist Pro:</p>
-            <p class="text-gray-700 mt-2">Hello! I am TUSHARA-WEAR's most advanced AI Stylist. Share your styling needs. Upload a photo for body-type analysis, or request an 'Outfit Recipe' to view your personalized FitScore!</p>
-            <div class="text-right mt-3">
-                <button onclick="speakMessage(this.parentElement.previousElementSibling.innerText, 'Kore')" class="text-gray-500 hover:text-primary-dark transition duration-150 p-1 rounded-full hover:bg-gray-100">
-                    <svg class="w-6 h-6 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M5.8 11a1 1 0 100 2 1 1 0 000-2z"></path></svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Input Area (Enhanced Look) -->
-    <div class="input-area p-4 bg-white shadow-2xl sticky bottom-0 border-t border-gray-300">
-        <div id="image-preview" class="mb-3 p-2 bg-gray-100 rounded-lg hidden flex justify-between items-center">
-            <img class="max-h-20 w-auto rounded-md shadow-inner" id="preview-img" alt="Uploaded Image Preview">
-            <button onclick="removeImage()" class="text-red-500 hover:text-red-700 transition duration-150 p-1">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-        <div class="flex items-end space-x-3">
-            <!-- Image Upload Button -->
-            <label for="image-upload" class="p-3 primary-dark text-white rounded-full cursor-pointer hover:bg-gray-700 transition duration-150 shadow-lg flex-shrink-0">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            </label>
-            <input type="file" id="image-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
-            
-            <!-- Text Input -->
-            <textarea id="user-input" class="flex-grow p-4 border border-gray-300 rounded-2xl resize-none focus:ring-4 focus:ring-blue-200 focus:border-primary-dark shadow-inner text-gray-800" rows="1" placeholder="Ask about fashion, e.g., 'Outfit Recipe for the office?'" onkeydown="handleKeyDown(event)"></textarea>
-            
-            <!-- Send Button -->
-            <button id="send-btn" onclick="sendMessage()" class="p-3 primary-dark text-white rounded-full hover:bg-gray-700 transition duration-150 shadow-xl flex-shrink-0 transform active:scale-95">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-            </button>
-        </div>
-    </div>
-
-    <!-- Loading Indicator -->
-    <div id="loading-indicator" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
-        <div class="bg-white p-6 rounded-xl shadow-2xl flex flex-col items-center space-y-3">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-10 w-10"></div>
-            <span class="text-lg font-medium text-primary-dark">AI is thinking...</span>
-        </div>
-    </div>
+<body>
     
-    <!-- --- JavaScript Code Starts Here --- -->
+    <div id="login-screen">
+        <h2>TUSHARA AGI Login</h2>
+        <p style="color:red; font-size:12px; margin-bottom: 15px;" id="login-error"></p>
+        <input type="text" id="login-username" placeholder="Username (e.g., SUJAL)">
+        <input type="password" id="login-password" placeholder="Password (e.g., SUJAL05052003)">
+        <button id="login-btn" onclick="attemptLogin()">Log In to AGI</button>
+        <p style="margin-top: 15px; font-size: 14px; color: #555;">(Hardcoded Credentials: SUJAL / SUJAL05052003)</p>
+    </div>
+
+
+    <div class="stylist-container" id="app-screen">
+        <div class="header">
+            <img src="tushara_logo_main.png" alt="TUSHARA Logo" class="app-logo"> 
+            <h1>TUSHARA AGI Assistant</h1>
+            <p>Ready to talk in Hindi or English</p>
+        </div>
+
+        <div id="image-preview-container">
+            <p style="font-size: 12px; color: #555; margin: 0 0 5px 0;">Photo ready for analysis:</p>
+            <img id="image-preview" src="#" alt="Image Preview" style="display:none;"/>
+        </div>
+
+        <div class="chat-box" id="chat-box">
+            </div>
+
+        <div class="advanced-controls">
+            <input type="file" id="file-upload" accept="image/*" onchange="previewImage(event)">
+            <label for="file-upload" class="upload-label">
+                📸 Photo Analysis
+            </label>
+            <button class="mode-btn" onclick="toggleAdvancedMode()">
+                🧠 AGI Mode: OFF
+            </button>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="user-input" placeholder="Type your message in Hindi or English..." onkeypress="if(event.key === 'Enter') sendMessage()">
+            <button id="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
     <script>
-        // --- Global Variables ---
-        const chatContainer = document.getElementById('chat-container');
+        const appScreen = document.getElementById('app-screen');
+        const loginScreen = document.getElementById('login-screen');
+        const chatBox = document.getElementById('chat-box');
         const userInput = document.getElementById('user-input');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const imageUpload = document.getElementById('image-upload');
-        const previewImg = document.getElementById('preview-img');
-        const imagePreview = document.getElementById('image-preview');
-        const consultationToggle = document.getElementById('consultation-mode-toggle');
-        let base64Image = null; // Stores uploaded image data
 
-        // --- API Endpoints ---
-        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
-        const TTS_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=";
+        // Global state for AGI Mode
+        let isAdvancedMode = false;
 
-        // --- PWA Setup Logic (Manifest and Service Worker) ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                const manifestContent = {
-                    "name": "TUSHARA-WEAR AI Stylist Pro",
-                    "short_name": "Tushara AI Pro",
-                    "description": "Your World-Class AI Fashion Stylist and Shopping Assistant",
-                    "start_url": "/TUSHARA-WEAR/",
-                    "display": "standalone",
-                    "background_color": "#ffffff",
-                    "theme_color": "#15203A",
-                    "icons": [
-                        { "src": "/TUSHARA-WEAR/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
-                        { "src": "/TUSHARA-WEAR/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
-                    ]
-                };
-                const manifestBlob = new Blob([JSON.stringify(manifestContent)], { type: 'application/json' });
-                const manifestUrl = URL.createObjectURL(manifestBlob);
+        // --- HARDCODED CREDENTIALS (Updated Password for Security) ---
+        const VALID_USERNAME_CREATOR = 'SUJAL';
+        const VALID_PASSWORD = 'SUJAL05052003';
 
-                const manifestLink = document.createElement('link');
-                manifestLink.rel = 'manifest';
-                manifestLink.href = manifestUrl;
-                document.head.appendChild(manifestLink);
+        // --- Login Logic ---
+        function attemptLogin() {
+            const username = document.getElementById('login-username').value.trim().toUpperCase();
+            const password = document.getElementById('login-password').value.trim();
+            const errorElement = document.getElementById('login-error');
 
-                const swCode = `
-                    const CACHE_NAME = 'tushara-ai-cache-v1';
-                    self.addEventListener('fetch', event => {
-                        event.respondWith(caches.match(event.request).then(response => response || fetch(event.request)));
-                    });
-                    self.addEventListener('install', event => {
-                        event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(['/TUSHARA-WEAR/', '/TUSHARA-WEAR/index.html'])));
-                    });
-                    self.addEventListener('activate', event => event.waitUntil(clients.claim()));
-                `;
-                const swBlob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(swBlob);
-
-                navigator.serviceWorker.register(swUrl, { scope: '/TUSHARA-WEAR/' }).then(registration => {
-                    console.log('Service Worker registered successfully:', registration);
-                }).catch(error => {
-                    console.error('Service Worker registration failed:', error);
-                });
-            });
-        }
-
-        // --- Utility Functions for TTS (PCM to WAV conversion) ---
-        function base64ToArrayBuffer(base64) {
-            const binaryString = atob(base64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
-
-        function writeString(view, offset, string) {
-            for (let i = 0; i < string.length; i++) {
-                view.setUint8(offset + i, string.charCodeAt(i));
+            if (username === VALID_USERNAME_CREATOR && password === VALID_PASSWORD) {
+                errorElement.textContent = '';
+                // Login hone par 'SUJAL MEMAWAT' naam save hoga
+                localStorage.setItem('is_logged_in', 'true');
+                localStorage.setItem('tushara_app_user', 'SUJAL MEMAWAT'); 
+                showAppScreen();
+            } else {
+                errorElement.textContent = 'Invalid Username or Password! Please try again.';
             }
         }
 
-        function pcmToWav(pcm16, sampleRate, mimeType) {
-            const buffer = new ArrayBuffer(44 + pcm16.length * 2);
-            const view = new DataView(buffer);
-            // WAV header creation
-            writeString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + pcm16.length * 2, true);
-            writeString(view, 8, 'WAVE');
-            writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true); 
-            view.setUint16(22, 1, true); 
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true); 
-            view.setUint16(32, 2, true); 
-            view.setUint16(34, 16, true); 
-            writeString(view, 36, 'data');
-            view.setUint32(40, pcm16.length * 2, true);
-            let offset = 44;
-            for (let i = 0; i < pcm16.length; i++) {
-                view.setInt16(offset, pcm16[i], true);
-                offset += 2;
+        function showAppScreen() {
+            loginScreen.style.display = 'none';
+            appScreen.style.display = 'flex';
+            
+            // Welcome message/Creator acknowledgement is displayed after successful login
+            const userName = localStorage.getItem('tushara_app_user') || 'Owner';
+            updateWelcomeMessage(userName);
+        }
+
+        // Check login status on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('is_logged_in') === 'true') {
+                showAppScreen();
             }
-            return new Blob([view], { type: 'audio/wav' });
-        }
-
-        // --- Message Handling Functions ---
-        function handleKeyDown(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault(); 
-                sendMessage();
+        });
+        
+        // --- Identity & Chat Functions ---
+        
+        function displayMessage(text, type) {
+            const bubble = document.createElement('div');
+            bubble.classList.add('message-bubble');
+            if (type === 'user') {
+                bubble.classList.add('user-message');
+            } else {
+                bubble.classList.add('ai-message-bubble');
             }
+            bubble.innerHTML = text; 
+            chatBox.appendChild(bubble);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        
+        // Welcome message update (Creator Acknowledgment - SUJAL MEMAWAT added)
+        function updateWelcomeMessage(name) {
+             // Creator list mein SUJAL MEMAWAT aur AI ka naam shamil hai
+             const creators = `<b>SUJAL MEMAWAT</b>, **${name}**, aur Maine`; 
+             const welcomeMessage = document.createElement('div');
+             welcomeMessage.classList.add('message-bubble', 'ai-message-bubble');
+             welcomeMessage.innerHTML = `Welcome back, <b>${name}</b>! I am TUSHARA AGI Assistant. 
+                <br>
+                ✨ **Yeh AGI App ${creators} Mil Kar Banayi Hai!** (We built this AGI app together!) ✨
+                <br><br>
+                How can I help you today?`;
+            chatBox.appendChild(welcomeMessage);
         }
 
-        function removeImage() {
-            base64Image = null;
-            imageUpload.value = '';
-            imagePreview.classList.add('hidden');
-            previewImg.src = '';
-        }
-
-        function handleImageUpload(event) {
+        // --- Photo Analysis Feature ---
+        function previewImage(event) {
+            const preview = document.getElementById('image-preview');
+            const previewContainer = document.getElementById('image-preview-container');
             const file = event.target.files[0];
+            
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    base64Image = e.target.result.split(',')[1];
-                    previewImg.src = e.target.result;
-                    imagePreview.classList.remove('hidden');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    previewContainer.style.display = 'block';
+                    displayMessage(`*Photo uploaded and ready for AGI analysis. Ask me for the FitScore!*`, 'system');
                 };
                 reader.readAsDataURL(file);
+            } else {
+                preview.src = '#';
+                preview.style.display = 'none';
+                previewContainer.style.display = 'none';
             }
+        }
+
+        // --- AGI Feature List ---
+        function showAdvancedFeaturesList() {
+            return `<b>AGI Stylist Pro Features (The Final Frontier):</b>
+                <br>
+                1. 🌍 **Geo-Socio-Styling:** Location, weather, aur social context analysis.
+                <br>
+                2. 🧠 **Mood & Bio-Feedback:** Heart rate/stress data se comfort styling.
+                <br>
+                3. 🔮 **Micro-Trend Forecasting:** Aapke sheher ke next viral trends ki prediction.
+                <br>
+                4. 👚 **Auto-Inventory & 3D Creation:** Wardrobe tracking aur naye 3D outfit combinations.
+                <br>
+                5. 🥽 **Holographic Try-On:** Real-time 3D AR try-on ka design.
+                <br><br>
+                (In features ka design ab app mein hai! Inko asal mein chalaane ke liye **Advanced AI Backend** ki zaroorat padegi!)`;
+        }
+
+        // --- AGI Mode Toggle ---
+        function toggleAdvancedMode() {
+            const modeBtn = document.querySelector('.mode-btn');
+            const userName = localStorage.getItem('tushara_app_user') || 'Friend';
+            
+            isAdvancedMode = !isAdvancedMode;
+            
+            if (isAdvancedMode) {
+                modeBtn.textContent = '🧠 AGI Mode: ON';
+                modeBtn.style.backgroundColor = '#d32f2f'; // Red
+                displayMessage(`**AGI Mode ON!** ${userName}, I am now operating at full **Artificial General Intelligence**. Ask me complex, multi-contextual style questions!`, 'ai');
+            } else {
+                modeBtn.textContent = '🧠 AGI Mode: OFF';
+                modeBtn.style.backgroundColor = '#4caf50'; // Green
+                displayMessage(`**AGI Mode OFF!** Returning to standard chat mode.`, 'ai');
+            }
+        }
+
+        // Core Bilingual AI Logic (Simulated)
+        function getAiResponse(userMessage) {
+            const lowerCaseMessage = userMessage.toLowerCase();
+            const userName = localStorage.getItem('tushara_app_user') || 'Friend';
+            
+            if (lowerCaseMessage.includes('sare features') || lowerCaseMessage.includes('show features')) {
+                return showAdvancedFeaturesList(); 
+            }
+            
+            // --- AGI Mode Specific Responses (Simulated Complexity) ---
+            if (isAdvancedMode) {
+                 if (lowerCaseMessage.includes('today')) {
+                    return `**AGI ANALYSIS:** ${userName}, based on geo-data (30°C/80% humidity) and your wardrobe history, I predict a 90% chance your best outfit is the breathable linen shirt. Micro-Trend forecasting suggests pairing it with navy.`;
+                } else if (lowerCaseMessage.includes('photo') || lowerCaseMessage.includes('analysis')) {
+                    return `**AGI BODY SCAN:** Photo analysis complete. Your current FitScore is 8.5/10. I recommend a slight cuff on the sleeves for optimal Golden Ratio alignment. Proceeding to Outfit Recipe...`;
+                }
+            }
+            // -----------------------------------------------------
+
+            const hindiKeywords = ['kya', 'kaise', 'batao', 'hain', 'ho', 'bhai', 'mujhe', 'kaha'];
+            const isHindi = hindiKeywords.some(keyword => lowerCaseMessage.includes(keyword));
+
+            if (isHindi) {
+                if (isAdvancedMode) {
+                    return `AGI mode mein, ${userName}, aap bade aur mushkil sawaal poochiye. Maine aapka sawaal samjh liya hai, lekin isse complex banao!`;
+                }
+                return `Mai theek hoon, ${userName}, shukriya! Aap bataiye, fashion ya style se related koi sawaal hai?`;
+            } else {
+                if (isAdvancedMode) {
+                    return `AGI mode demands complexity, ${userName}. I've processed your query, but for a true AGI response, give me more context (e.g., location, mood, event).`;
+                }
+                return `Hello, ${userName}! I am Tushara AI Assistant. Ask me about style trends, outfit recipes, or anything else!`;
+            }
+        }
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+
+            displayMessage(message, 'user');
+            userInput.value = '';
+
+            setTimeout(() => {
+                const aiResponse = getAiResponse(message);
+                displayMessage(aiResponse, 'ai');
+            }, 500);
         }
         
-        // Renders the structured data from the AI as a Style Recipe Card
-        function renderOutfitCard(cardData, container) {
-            const items = Array.isArray(cardData) ? cardData : [cardData];
-
-            let html = '<div class="bg-primary-dark text-white p-4 rounded-xl shadow-xl mt-3">';
-            html += '<h3 class="text-xl font-bold mb-3 border-b border-gray-600 pb-2 flex items-center">TUSHARA Style Recipe Pro <span class="ml-2 bg-yellow-400 text-primary-dark text-xs font-extrabold px-2 py-0.5 rounded-full shadow-md">ADVANCED</span></h3>';
-            
-            items.forEach((item, index) => {
-                html += `<div class="${index > 0 ? 'mt-4 pt-4 border-t border-gray-700' : ''}">`;
-                html += `<p class="font-semibold text-gray-200 text-lg">${item.styleName || 'Outfit Idea'}</p>`;
-                html += `<p class="text-sm text-gray-400">Color Palette: ${item.colorPalette || 'Not Specified'}</p>`;
-                
-                // --- TUSHARA FitScore Display ---
-                if (item.fitScore) {
-                    const scoreColor = item.fitScore >= 80 ? 'text-green-400' : (item.fitScore >= 60 ? 'text-yellow-400' : 'text-red-400');
-                    html += `<div class="mt-2 p-2 rounded-lg bg-[#273555]">`;
-                    html += `<p class="text-sm font-bold flex items-center"><span class="text-yellow-400 mr-2">⭐</span> TUSHARA FitScore: <span class="${scoreColor} ml-1">${item.fitScore}/100</span></p>`;
-                    html += `<p class="text-xs text-gray-400 mt-1">${item.fitReason || 'Body type analysis shows this fit is ideal.'}</p>`;
-                    html += `</div>`;
-                }
-
-                if (item.items && Array.isArray(item.items)) {
-                    html += '<p class="font-medium mt-3 mb-1">Items:</p>';
-                    html += '<ul class="list-disc list-inside text-sm text-white space-y-1 ml-4">';
-                    item.items.forEach(clothingItem => {
-                        html += `<li>${clothingItem}</li>`;
-                    });
-                    html += '</ul>';
-                }
-
-                if (item.stylingTip) {
-                    html += `<p class="mt-4 text-sm italic text-gray-300 border-l-4 border-yellow-400 pl-3">Stylist Tip: ${item.stylingTip}</p>`;
-                }
-                
-                // --- TUSHARA Green Sustainability Note ---
-                if (item.sustainabilityNote) {
-                    html += `<div class="mt-4 p-3 rounded-lg bg-green-900 bg-opacity-30 border border-green-700">`;
-                    html += `<p class="text-sm font-bold flex items-center text-green-400"><span class="mr-2">🌱</span> TUSHARA Green Note:</p>`;
-                    html += `<p class="text-xs text-gray-300 mt-1">${item.sustainabilityNote}</p>`;
-                    html += `</div>`;
-                }
-                
-                html += '</div>';
+        // PWA SCRIPT: Service Worker registration (Yeh tabhi kaam karega jab sw.js file folder mein ho)
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js').then(function(registration) {
+              console.log('Service Worker registered successfully');
+            }, function(err) {
+              console.log('Service Worker registration failed: ', err);
             });
-
-            html += '</div>';
-            container.innerHTML += html;
+          });
         }
-
-        // Displays the message in the chat container
-        function appendMessage(sender, text, isStructured = false, rawJson = null) {
-            const messageElement = document.createElement('div');
-            const role = sender === 'user' ? 'You' : 'AI Stylist Pro';
-            const roleClass = sender === 'user' 
-                ? 'bg-blue-600 text-white self-end rounded-t-xl rounded-bl-xl shadow-lg user-message' 
-                : 'ai-message-card bg-white self-start rounded-t-xl rounded-br-xl shadow-xl';
-            const voice = sender === 'user' ? 'Zephyr' : 'Kore'; 
-
-            messageElement.className = `${roleClass} p-4 max-w-[85%] md:max-w-[60%]`;
-            
-            if (sender === 'user') {
-                 messageElement.innerHTML = `<p class="font-semibold mb-1">${role}:</p><p class="whitespace-pre-wrap">${text}</p>`;
-            } else if (isStructured && rawJson) {
-                messageElement.innerHTML = `<p class="font-bold text-lg text-primary-dark mb-1">${role}:</p>`;
-                renderOutfitCard(rawJson, messageElement);
-            } else {
-                messageElement.innerHTML = `<p class="font-bold text-lg text-primary-dark mb-1">${role}:</p><p class="text-gray-700 whitespace-pre-wrap">${text}</p>`;
-            }
-            
-            // Add TTS button for AI messages
-            if (sender !== 'user' && !isStructured) {
-                const ttsContainer = document.createElement('div');
-                ttsContainer.className = "text-right mt-3";
-                // The speaker button calls the speakMessage function with the full text
-                ttsContainer.innerHTML = `<button onclick="speakMessage('${text.replace(/'/g, "\\'").replace(/\n/g, ' ')}', '${consultationToggle.checked ? 'multi' : voice}')" class="text-gray-500 hover:text-primary-dark transition duration-150 p-1 rounded-full hover:bg-gray-100">
-                    <svg class="w-6 h-6 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M5.8 11a1 1 0 100 2 1 1 0 000-2z"></path></svg>
-                </button>`;
-                messageElement.appendChild(ttsContainer);
-            }
-
-            chatContainer.appendChild(messageElement);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        // Mock function to determine body type and context based on image presence (for demo)
-        function getBodyTypeAndContext(hasImage) {
-            // In a real app, this would be an ML model call. Here it's a mock.
-            const bodyTypes = ["Athletic/V-Shape", "Rectangular", "Oval/Apple", "Trapezoid"];
-            const bodyType = hasImage ? bodyTypes[Math.floor(Math.random() * bodyTypes.length)] : bodyTypes[1]; // Default to Rectangular if no image
-
-            // Mock Contextual Weather/Mood
-            const weather = ["Sunny and Warm", "Light Rain", "Cool and Windy", "Pleasant"];
-            const context = {
-                bodyType: bodyType,
-                weather: weather[Math.floor(Math.random() * weather.length)],
-                mood: "professional yet comfortable"
-            };
-            return context;
-        }
-
-        // --- Core AI API Call (Gemini) ---
-        async function fetchAIResponse(userQuery, image = null) {
-            loadingIndicator.classList.remove('hidden');
-            const context = getBodyTypeAndContext(!!image); // Get dynamic context
-
-            // Check if the request should return a structured JSON (Outfit Recipe Card)
-            const isStr            
+    </script>
+</body>
+</html>
