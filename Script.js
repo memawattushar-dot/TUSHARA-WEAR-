@@ -1,4 +1,4 @@
-/*
+*
  * TUSHARA-WEAR: Advanced AI Sales and Advertising Script
  * Purpose: Track user intent and show personalized offers to increase sales.
  */
