@@ -1,14 +1,23 @@
 /*
- * TUSHARA-WEAR: FULL ADVANCED Style Sheet (Sticky Nav, Hover Animations, Responsive)
+ * TUSHARA-WEAR: FULL ADVANCED Style Sheet (Modern Color Palette)
  */
 
-/* --- Global & Typography --- */
+/* --- GLOBAL COLORS --- */
+:root {
+    --primary-color: #0F1E38;      /* Dark Navy Blue (Main Background/Header) */
+    --secondary-color: #FF5733;    /* Bright Orange-Red (CTA/Accent) */
+    --text-color: #333333;         /* Dark Text */
+    --light-bg: #F9F9F9;           /* Light Grayish Background */
+    --white: #FFFFFF;
+}
+
+/* --- Global Reset & Typography --- */
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f5; 
-    color: #333;
+    background-color: var(--light-bg); 
+    color: var(--text-color);
     line-height: 1.6;
 }
 .container {
@@ -18,19 +27,20 @@ body {
     padding: 20px 0;
     text-align: center;
 }
+h1, h2, h3 { color: var(--primary-color); }
 
 /* --- NAVIGATION BAR (STICKY) --- */
 header {
-    background-color: #1a1a1a;
+    background-color: var(--primary-color); /* Dark Navy Blue */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     padding: 10px 0;
-    position: sticky; /* ADVANCED: Menu yahan chipkega */
+    position: sticky; 
     top: 0;
     z-index: 1000;
 }
 nav { display: flex; justify-content: center; }
 nav a {
-    color: white;
+    color: var(--white);
     text-decoration: none;
     padding: 12px 20px;
     margin: 0 5px;
@@ -38,21 +48,36 @@ nav a {
     border-radius: 4px;
 }
 nav a:hover {
-    background-color: #ff6600;
-    color: #1a1a1a;
+    background-color: var(--secondary-color); /* Bright Orange-Red */
+    color: var(--white);
 }
 .brand-logo { font-weight: bold; font-size: 1.2em; }
 
 /* --- Hero Section & Animations --- */
 .hero-section { position: relative; height: 450px; overflow: hidden; }
 .hero-image {
-    width: 100%; height: 100%; object-fit: cover; opacity: 0.8; 
+    width: 100%; height: 100%; object-fit: cover; opacity: 0.85; /* Thoda kam transparent */
     transition: transform 0.5s ease;
 }
-.hero-section:hover .hero-image { transform: scale(1.05); } /* Hover Animation */
+.hero-section:hover .hero-image { transform: scale(1.05); } 
 .hero-text {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.7); padding: 30px; border-radius: 10px; color: white;
+    background: rgba(0, 0, 0, 0.75); padding: 30px; border-radius: 10px; color: var(--white);
+}
+
+/* --- CTA Buttons --- */
+.cta-button {
+    display: inline-block;
+    background-color: var(--secondary-color); /* Bright Orange-Red */
+    color: var(--white);
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.cta-button:hover {
+    background-color: #D94420; /* Darker Orange */
+    transform: translateY(-2px);
 }
 
 /* --- Product Cards (ADVANCED GRID) --- */
@@ -63,14 +88,14 @@ nav a:hover {
     padding: 20px;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); 
     vertical-align: top;
-    background-color: white;
+    background-color: var(--white); /* White Card Background */
     border-radius: 8px;
     text-align: center;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 .product-card:hover {
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(-5px); /* Hover Lift Animation */
+    transform: translateY(-5px); 
 }
 .product-card img {
     width: 100%;
@@ -81,8 +106,21 @@ nav a:hover {
     margin-bottom: 15px;
 }
 
+/* --- Footer --- */
+footer {
+    background-color: var(--primary-color); /* Dark Navy Blue */
+    color: var(--light-bg);
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+}
+.footer-content p { margin: 5px 0; font-size: 0.9em; }
+
 /* --- AI POPUP STYLE (for Script.js) --- */
-#ai-popup-ad { animation: fadeIn 0.5s ease-out; }
+#ai-popup-ad {
+    background: var(--secondary-color) !important; /* AI Pop-up bhi Orange-Red */
+    animation: fadeIn 0.5s ease-out;
+}
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
