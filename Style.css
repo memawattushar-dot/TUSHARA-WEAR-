@@ -1,140 +1,77 @@
 /*
- * TUSHARA-WEAR: Advanced Style Sheet
- * Professional & Responsive Design
+ * TUSHARA-WEAR: FULL ADVANCED Style Sheet (Sticky Nav, Hover Animations, Responsive)
  */
 
-/* --- 1. Global Reset & Typography --- */
+/* --- Global & Typography --- */
 body {
-    font-family: 'Arial', sans-serif; /* Modern, clean font */
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f5; /* Light grey/off-white background */
+    background-color: #f0f0f5; 
     color: #333;
     line-height: 1.6;
 }
-
-h1, h2, h3 {
-    color: #1a1a1a;
-    font-weight: 700;
-}
-
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px 0;
-}
-
-/* --- 2. Navigation Bar (Header) --- */
-header {
-    background-color: #1a1a1a; /* Deep Black Header */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    padding: 10px 0;
-}
-
-nav {
     text-align: center;
 }
 
+/* --- NAVIGATION BAR (STICKY) --- */
+header {
+    background-color: #1a1a1a;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
+    position: sticky; /* ADVANCED: Menu yahan chipkega */
+    top: 0;
+    z-index: 1000;
+}
+nav { display: flex; justify-content: center; }
 nav a {
     color: white;
     text-decoration: none;
-    padding: 12px 25px;
-    margin: 0 8px;
-    font-size: 16px;
-    font-weight: 500;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 12px 20px;
+    margin: 0 5px;
+    transition: background-color 0.3s ease;
     border-radius: 4px;
 }
-
 nav a:hover {
-    background-color: #ff6600; /* Bright Orange Hover Effect */
+    background-color: #ff6600;
     color: #1a1a1a;
 }
+.brand-logo { font-weight: bold; font-size: 1.2em; }
 
-/* --- 3. Hero Section (Banner) --- */
-.hero-section {
-    position: relative;
-    text-align: center;
-    color: white;
-    height: 450px; /* Thoda Bada Banner */
-    overflow: hidden;
-}
-
+/* --- Hero Section & Animations --- */
+.hero-section { position: relative; height: 450px; overflow: hidden; }
 .hero-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.8; /* Image ko halka sa dark karna */
+    width: 100%; height: 100%; object-fit: cover; opacity: 0.8; 
     transition: transform 0.5s ease;
 }
-
-.hero-section:hover .hero-image {
-    transform: scale(1.05); /* Mouse le jaane par halka zoom */
-}
-
+.hero-section:hover .hero-image { transform: scale(1.05); } /* Hover Animation */
 .hero-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.7);
-    padding: 30px;
-    border-radius: 10px;
-    max-width: 90%;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7); padding: 30px; border-radius: 10px; color: white;
 }
 
-.hero-text h1 {
-    color: white;
-    font-size: 2.5em;
-    margin-bottom: 10px;
-}
-
-/* --- 4. Call-to-Action Buttons (CTA) --- */
-.cta-button {
-    display: inline-block;
-    background-color: #ff6600; /* Bright orange button */
-    color: white;
-    padding: 12px 30px;
-    text-decoration: none;
-    border-radius: 50px; /* Gol Kinare */
-    margin-top: 20px;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    border: none;
-    cursor: pointer;
-}
-
-.cta-button:hover {
-    background-color: #e65c00;
-    transform: translateY(-2px); /* Click hone jaisa effect */
-}
-
-/* --- 5. Product Cards (Featured Collections & Products Page) --- */
-.featured-collections {
-    text-align: center;
-    padding: 40px 0;
-}
-
-/* Products ko side-by-side dikhane ke liye (Grid-like effect) */
+/* --- Product Cards (ADVANCED GRID) --- */
 .product-card {
     display: inline-block;
-    width: 45%; /* Desktop par do cards, mobile par ek */
+    width: 45%; 
     margin: 15px 1.5%;
     padding: 20px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Gehra Shadow */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); 
     vertical-align: top;
     background-color: white;
     border-radius: 8px;
     text-align: center;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-
 .product-card:hover {
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(-5px); /* Upar uthne ka effect */
+    transform: translateY(-5px); /* Hover Lift Animation */
 }
-
 .product-card img {
     width: 100%;
     height: auto;
@@ -144,26 +81,18 @@ nav a:hover {
     margin-bottom: 15px;
 }
 
-/* --- 6. Footer --- */
-footer {
-    background-color: #1a1a1a;
-    color: #f0f0f5;
-    text-align: center;
-    padding: 20px 0;
-    margin-top: 40px;
+/* --- AI POPUP STYLE (for Script.js) --- */
+#ai-popup-ad { animation: fadeIn 0.5s ease-out; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- 7. Responsiveness (Mobile Fix) --- */
+/* --- Responsiveness (Mobile) --- */
 @media (max-width: 768px) {
-    /* Chhote screen par 100% width tak faila do */
     .product-card {
         width: 90%; 
         display: block;
         margin: 15px auto;
     }
-
-    .hero-text h1 {
-        font-size: 1.8em;
-    }
 }
-  
