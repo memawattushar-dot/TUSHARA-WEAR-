@@ -1,3 +1,36 @@
+// ==========================================================
+// 🚨 [START: FIREBASE CONNECTION - MODULE V9/V12] 🚨
+// Firebase V9/V12 सिंटैक्स के लिए Imports
+// ==========================================================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+// Firestore को भी Import करें यदि आप चैट हिस्ट्री को सेव करने के लिए इसका उपयोग कर रहे हैं
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+
+// Firebase Console से कॉपी किया गया कॉन्फ़िगरेशन कोड
+const firebaseConfig = {
+  // आपकी असली Keys यहाँ हैं
+  apiKey: "AIzaSyDSlpSnkKyMJJz1Sf0ffClEQS6208Oovso",
+  authDomain: "tushara-assistant.firebaseapp.com",
+  projectId: "tushara-assistant",
+  storageBucket: "tushara-assistant.firebasestorage.app",
+  messagingSenderId: "825591383486",
+  appId: "1:825591383486:web:7a617144d4080f201b25ef",
+  measurementId: "G-M7C3FK5FF9"
+};
+
+// Initialize Firebase App
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app); // Firestore डेटाबेस को इनिशियलाइज़ करें
+
+// ==========================================================
+// 🚨 [END: FIREBASE CONNECTION] 🚨
+// ==========================================================
+
+
+// ⚠️ यहाँ से आपका ORIGINAL script.js कोड शुरू होता है:
 const chatBox = document.getElementById('chat-output-box');
 const userInput = document.getElementById('command-input');
 const visionFileInput = document.getElementById('vision-file-input');
@@ -36,6 +69,9 @@ function analyzeSentiment(prompt) {
 }
 
 // --- MEMORY AND HISTORY ---
+// नोट: यदि आप डेटाबेस का उपयोग कर रहे हैं, तो इन फ़ंक्शंस को Firestore के साथ काम करने के लिए बदलना होगा।
+// यह अभी LocalStorage का उपयोग कर रहा है।
+
 function getChatHistory() {
     const history = localStorage.getItem('tushara_chat_history');
     return history ? JSON.parse(history) : [];
