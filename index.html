@@ -1027,6 +1027,29 @@
             TUSHARA Assistant (Creative Owner: SUJAL MEMAWAT) - Sabhi Adhikar Surakshit, ${new Date().getFullYear()}
         </footer>
     </div>
+    <script type="module">
+  // Firebase SDKs को Import करें
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+  // आपकी script.js में Firestore का उपयोग करने के लिए, यहां और SDKs जोड़ने की आवश्यकता हो सकती है 
+  
+  // आपका Firebase कॉन्फ़िगरेशन
+  const firebaseConfig = {
+    apiKey: "AIzaSyDSlpSnkKyMJJz1Sf0ffClEQS6208Oovso",
+    authDomain: "tushara-assistant.firebaseapp.com",
+    projectId: "tushara-assistant",
+    storageBucket: "tushara-assistant.firebasestorage.app",
+    messagingSenderId: "825591383486",
+    appId: "1:825591383486:web:7a617144d4080f201b25ef",
+    measurementId: "G-M7C3FK5FF9"
+  };
+
+  // Firebase को इनिशियलाइज़ करें
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
+<script type="module" src="script.js"></script>
 </body>
 </html>
 
