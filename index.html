@@ -3,276 +3,374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUSHARA AGI Assistant - Futuristic Command Hub</title>
+    <title>TUSHARA AGI Assistant - Creative Owner: SUJAL MEMAWAT</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- DARK MODE ADVANCED THEME (Deep Space Blue) --- */
+        /* --- MODERN PROFESSIONAL BLUE/WHITE THEME --- */
         :root {
-            --color-primary: #00B8D4; /* Cyan/Aqua Accent for focus */
-            --color-secondary: #FFEA00; /* Yellow Accent for warnings/status */
-            --color-dark-bg: #000022; /* Deep Black Blue Background */
-            --color-panel-bg: #0D47A1; /* Dark Blue Panel/Card Background */
-            --color-text-light: #E0F7FA;
-            --color-shadow: rgba(0, 184, 212, 0.4);
+            --color-primary-blue: #1A73E8; /* Google's Primary Blue */
+            --color-accent-green: #34A853; /* Secondary Green Accent */
+            --color-light-bg: #FFFFFF; /* Pure White Background */
+            --color-panel-bg: #F5F5F5; /* Light Grey for sections/cards */
+            --color-text-dark: #202124; /* Dark Grey Text */
+            --color-text-subtle: #70757A; /* Subtler Grey Text */
+            --color-border-clean: #DADCE0; /* Light Border */
+            --color-shadow-soft: rgba(0, 0, 0, 0.1);
         }
 
         /* Base & Structure */
         body {
-            font-family: 'Consolas', 'Fira Code', monospace; /* Monospace font for tech feel */
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background: var(--color-dark-bg);
-            color: var(--color-text-light);
+            background: var(--color-panel-bg);
+            color: var(--color-text-dark);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden; /* Prevent scrolling outside main container */
         }
         .ai-hub-container {
-            width: 98%;
-            max-width: 600px;
-            background-color: var(--color-panel-bg);
-            border-radius: 15px;
-            box-shadow: 0 0 30px var(--color-shadow);
+            width: 95%;
+            max-width: 550px;
+            background-color: var(--color-light-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--color-shadow-soft);
             overflow: hidden;
             display: flex; 
             flex-direction: column;
-            height: 98vh; 
-            border: 2px solid var(--color-primary);
+            height: 95vh; 
         }
 
         /* Header & Logo */
         .header {
             padding: 15px 20px;
-            background-color: #001f5f; /* Darker header bar */
-            border-bottom: 2px solid var(--color-primary);
+            background-color: var(--color-light-bg);
+            border-bottom: 1px solid var(--color-border-clean);
             display: flex;
             align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .logo-placeholder {
+            width: 40px; 
+            height: 40px; 
+            background-color: var(--color-primary-blue); 
+            border-radius: 50%; 
+            display: inline-block;
+            margin-right: 15px;
         }
         .header h1 {
-            color: var(--color-primary);
-            font-size: 24px;
+            color: var(--color-text-dark);
+            font-size: 20px;
             margin: 0;
-            font-weight: 900;
+            font-weight: 600;
         }
         .header p {
-            color: var(--color-secondary);
+            color: var(--color-text-subtle);
             font-size: 12px;
-            margin-top: 5px;
+            margin-top: 2px;
         }
 
-        /* --- Dynamic AI Tool Display --- */
+        /* Dynamic AI Tool Display (Chips) */
         #ai-tool-display {
             padding: 10px 20px;
-            background: #000033; /* Even darker shade */
-            color: #80CBC4; /* Soft aqua green */
-            font-size: 13px;
-            border-bottom: 1px solid #00B8D433;
+            background: var(--color-panel-bg);
+            color: var(--color-text-subtle);
+            font-size: 12px;
+            border-bottom: 1px solid var(--color-border-clean);
         }
-        #current-tool {
-            font-weight: bold;
-            color: var(--color-primary);
+        .tool-chip {
+            display: inline-block;
+            background-color: #E8F0FE; 
+            color: var(--color-primary-blue);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            margin-left: 5px;
+            margin-top: 5px;
+            transition: all 0.3s;
+        }
+        .tool-chip.active {
+            background-color: var(--color-accent-green);
+            color: var(--color-light-bg);
+            box-shadow: 0 2px 5px rgba(52, 168, 83, 0.4);
         }
         
         /* Chat/Output Window */
         .chat-output-box {
             flex-grow: 1;
             padding: 20px;
-            background-color: var(--color-dark-bg); 
+            background-color: var(--color-light-bg); 
             overflow-y: auto;
-            border-top: 1px solid #00B8D433;
+        }
+        .console-text {
+            color: var(--color-text-subtle); 
+            font-size: 14px;
+            margin-bottom: 15px;
         }
 
-        /* Chat Bubbles (Technical Style) */
+        /* Chat Bubbles */
         .message-bubble {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            max-width: 85%;
             padding: 10px 15px;
-            border-radius: 8px; /* Sharper edges */
-            font-size: 14px;
+            border-radius: 18px;
+            font-size: 15px;
         }
         .user-message {
-            background: #00B8D420; /* Primary color transparent background */
-            border-left: 3px solid var(--color-primary);
+            background: var(--color-primary-blue); 
+            color: var(--color-light-bg);
             margin-left: auto;
-            color: var(--color-text-light);
+            border-bottom-right-radius: 4px; 
         }
         .ai-message-bubble {
-            background-color: #0D47A1;
-            border-right: 3px solid var(--color-secondary);
+            background-color: var(--color-panel-bg);
+            color: var(--color-text-dark);
             margin-right: auto;
-            color: var(--color-text-light);
+            border: 1px solid var(--color-border-clean);
+            border-bottom-left-radius: 4px; 
         }
 
-        /* --- Command Palette Input (Global Input) --- */
+        /* Command Palette Input (Fixed Floating Bar) */
         .command-palette {
-            padding: 15px 20px;
-            background-color: #001f5f;
-            border-top: 2px solid var(--color-primary);
+            padding: 10px 15px;
+            background-color: var(--color-light-bg);
+            border-top: 1px solid var(--color-border-clean);
+            display: flex;
+            align-items: center;
         }
         #command-input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid var(--color-primary);
-            border-radius: 10px;
+            flex-grow: 1;
+            padding: 12px 20px;
+            border: 1px solid var(--color-border-clean);
+            border-radius: 25px;
             font-size: 16px;
-            background-color: #000022;
-            color: var(--color-text-light);
-            box-shadow: 0 0 10px var(--color-shadow);
-            transition: box-shadow 0.3s;
+            background-color: var(--color-panel-bg);
+            color: var(--color-text-dark);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            margin-right: 10px;
+            transition: all 0.2s;
         }
         #command-input:focus {
             outline: none;
-            box-shadow: 0 0 20px var(--color-primary);
+            border-color: var(--color-primary-blue);
+            background-color: var(--color-light-bg);
+            box-shadow: 0 1px 6px rgba(26, 115, 232, 0.2);
+        }
+        .send-btn {
+            background-color: var(--color-primary-blue);
+            color: var(--color-light-bg);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .send-btn:hover {
+            background-color: #1565C0;
+        }
+        
+        /* AGI Vision Input Styling */
+        #vision-file-input {
+            display: none; /* Hide the actual file input */
         }
 
-        /* --- Advanced Control Panel (New Features) --- */
+        /* Advanced Control Panel (New Features - Clean Buttons) */
         .control-panel {
             display: flex;
             justify-content: space-between;
             padding: 10px 20px;
-            background-color: #001f5f;
-            border-top: 1px solid var(--color-secondary);
+            background-color: var(--color-panel-bg);
+            border-top: 1px solid var(--color-border-clean);
         }
         .advanced-feature-btn {
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 500;
             cursor: pointer;
-            border: none;
+            border: 1px solid;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
             font-size: 12px;
+            flex-grow: 1;
+            margin: 0 5px;
+            background-color: var(--color-light-bg);
         }
         .vision-mode-btn {
-            background-color: #7B1FA2; /* Purple */
-            color: white;
+            border-color: var(--color-accent-green);
+            color: var(--color-accent-green);
         }
         .neural-reset-btn {
-            background-color: #D32F2F; /* Red */
-            color: white;
+            border-color: var(--color-primary-blue);
+            color: var(--color-primary-blue);
         }
-        .vision-mode-btn:hover { background-color: #9C27B0; transform: translateY(-1px); }
-        .neural-reset-btn:hover { background-color: #E53935; transform: scale(1.05); }
+        .vision-mode-btn:hover { background-color: #E6F4EA; }
+        .neural-reset-btn:hover { background-color: #E8F0FE; }
 
-        /* --- Status Dashboard Footer --- */
+        /* Status Dashboard Footer */
         #status-dashboard {
             padding: 8px 20px;
-            background-color: var(--color-primary);
-            color: #000033; /* Dark text on bright accent */
+            background-color: var(--color-light-bg);
+            color: var(--color-text-subtle);
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 400;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        .status-item {
-            margin-right: 15px;
-            white-space: nowrap;
+            border-top: 1px solid var(--color-border-clean);
         }
         .status-item span {
-            color: var(--color-panel-bg);
-            font-weight: 900;
+            font-weight: 600;
+            color: var(--color-primary-blue);
         }
-
     </style>
-</head>
+    </head>
 
-<body>
+<body onload="loadChatHistory()">
     
     <div class="ai-hub-container">
 
         <div class="header">
-            <div style="margin-right: 15px;">
-                <div style="width: 50px; height: 50px; background-color: var(--color-primary); border-radius: 50%; display: inline-block;"></div>
-            </div>
+            <div class="logo-placeholder"></div>
             <div>
-                <h1>TUSHARA AGI Command Hub</h1>
-                <p>Status: AGI Core Online | Multi-Modal Access</p>
+                <h1>TUSHARA AGI Assistant</h1>
+                <p>Creative Owner: **SUJAL MEMAWAT** | All Tools Active</p>
             </div>
         </div>
 
         <div id="ai-tool-display">
-            <span style="color: #FFEA00;">[STATUS]</span> Currently utilizing: <span id="current-tool">Web Search & Analysis Tool</span>
+            <span style="color: var(--color-text-dark); font-weight: 500;">Active Tools:</span> 
+            <span id="tool-search" class="tool-chip">Web Search</span> 
+            <span id="tool-code" class="tool-chip">Code Interpreter</span> 
+            <span id="tool-creative" class="tool-chip">Creative Suite</span>
+            <span id="tool-data" class="tool-chip">Data Analysis</span>
+            <span id="tool-vision" class="tool-chip">AGI Vision</span>
         </div>
 
         <div class="chat-output-box" id="chat-output-box">
-            <div style="color: #90CAF9; margin-bottom: 20px;">
-                > TUSHARA AGI v3.0 Initialized.<br>
-                > **Welcome, Operator.** Please enter a command or query into the palette below.<br>
-                > Suggested Command: `/analyze [image file]` or `/generate code:HTML button`
             </div>
 
-            <div class="message-bubble ai-message-bubble">
-                **Response:** Initial diagnostic sequence complete. All neural pathways nominal. Ready for advanced task execution.
-            </div>
-
-             <div class="message-bubble user-message">
-                Execute creative writing sequence on 'The forgotten city of Indus'.
-            </div>
-        </div>
+        <input type="file" id="vision-file-input" accept="image/*" onchange="handleVisionInput(event)">
 
         <div class="control-panel">
-             <button class="advanced-feature-btn vision-mode-btn" onclick="toggleVisionMode()">👁️ AGI Vision Mode (ON/OFF)</button>
-             <button class="advanced-feature-btn neural-reset-btn" onclick="performNeuralReset()">🧠 Neural Reset</button>
+             <button class="advanced-feature-btn vision-mode-btn" onclick="toggleVisionMode()">📸 AGI Vision Input</button>
+             <button class="advanced-feature-btn neural-reset-btn" onclick="performNeuralReset()">✨ New Session (Reset)</button>
         </div>
 
         <div class="command-palette">
-            <input type="text" id="command-input" placeholder="Type command or query here (e.g., /search, /code, /generate)..." onkeypress="if(event.key === 'Enter') sendCommand()">
+            <input type="text" id="command-input" placeholder="Type your message here..." onkeypress="if(event.key === 'Enter') sendCommand()">
+            <button class="send-btn" onclick="sendCommand()">↑</button>
         </div>
         
         <div id="status-dashboard">
-            <div class="status-item">Latency: <span>5ms</span></div>
-            <div class="status-item">Memory Load: <span>12.4%</span></div>
-            <div class="status-item">Mode: <span>AGI Level 3</span></div>
+            <div class="status-item">Latency: <span>6ms</span></div>
+            <div class="status-item">Model: <span>AGI v5.0</span></div>
+            <div class="status-item">Status: <span>All Tools Online</span></div>
         </div>
     </div>
 
     <script>
-        // Placeholder functions for the new advanced features
-        
-        function sendCommand() {
-            const input = document.getElementById('command-input');
-            const command = input.value.trim();
-            if (command) {
-                // Simulate processing/response based on command
-                alert(`Executing Command: ${command}`);
-                input.value = '';
-                // In a real app, this sends the command to the AI backend.
-            }
+        const chatBox = document.getElementById('chat-output-box');
+        const userInput = document.getElementById('command-input');
+        const visionFileInput = document.getElementById('vision-file-input');
+        const toolList = ['tool-search', 'tool-code', 'tool-creative', 'tool-data', 'tool-vision'];
+
+        // --- 1. MEMORY AND HISTORY ---
+        function getChatHistory() {
+            const history = localStorage.getItem('tushara_chat_history');
+            return history ? JSON.parse(history) : [];
         }
 
-        function toggleVisionMode() {
-            const btn = document.querySelector('.vision-mode-btn');
-            if (btn.textContent.includes("OFF")) {
-                btn.textContent = "👁️ AGI Vision Mode (ON)";
-                alert("AGI Vision Mode Activated: Ready for image/video input.");
+        function saveChatHistory(message) {
+            const history = getChatHistory();
+            history.push(message);
+            localStorage.setItem('tushara_chat_history', JSON.stringify(history));
+        }
+
+        function loadChatHistory() {
+            const history = getChatHistory();
+            if (history.length === 0) {
+                // Initial welcome message if no history
+                displayMessage({ 
+                    role: 'ai', 
+                    text: "👋 **Namaste!** I am TUSHARA AGI, and all my tools are active. Your past conversations are saved automatically." 
+                }, false);
             } else {
-                btn.textContent = "👁️ AGI Vision Mode (OFF)";
-                alert("AGI Vision Mode Deactivated.");
+                history.forEach(msg => displayMessage(msg, false));
+                chatBox.scrollTop = chatBox.scrollHeight;
             }
         }
 
-        function performNeuralReset() {
-             const confirmation = confirm("WARNING: Performing Neural Reset will clear the current session memory. Continue?");
-             if (confirmation) {
-                 alert("Neural Reset Initiated. TUSHARA AGI Core Rebooting...");
-                 // In a real app, this would clear session history/memory storage.
-                 window.location.reload(); // Simple reboot simulation
-             }
+        // --- CORE DISPLAY LOGIC ---
+        function displayMessage(message, isTyping = true) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message-bubble ${message.role}-message`;
+            
+            if (isTyping && message.role === 'ai') {
+                chatBox.appendChild(msgDiv);
+                simulateTyping(msgDiv, message.text, message);
+            } else {
+                msgDiv.innerHTML = message.text;
+                chatBox.appendChild(msgDiv);
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return msgDiv;
         }
 
-        // Example: Update the tool display dynamically (could be updated by backend response)
-        // setInterval(() => {
-        //     const tools = ['Code Interpreter', 'Web Search & Analysis Tool', 'Creative Writer Core', 'Vision Processor'];
-        //     const currentTool = document.getElementById('current-tool');
-        //     const randomTool = tools[Math.floor(Math.random() * tools.length)];
-        //     currentTool.textContent = randomTool;
-        // }, 5000);
-        
-        // Initial setup for tool display
-        // Note: The timer/interval logic is commented out, as it requires more complex scripting.
-        
-    </script>
-</body>
-</html>
+        // --- 4. REAL-TIME TYPING SIMULATION ---
+        function simulateTyping(element, fullText, messageData) {
+            let i = 0;
+            element.innerHTML = '';
+            const interval = setInterval(() => {
+                if (i < fullText.length) {
+                    element.innerHTML += fullText.charAt(i);
+                    i++;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                } else {
+                    clearInterval(interval);
+                    if (messageData) {
+                        saveChatHistory(messageData);
+                    }
+                }
+            }, 30); // 30ms delay per character
+        }
+
+        // --- 2. TOOL UTILIZATION ---
+        function updateToolDisplay(toolId) {
+            toolList.forEach(id => {
+                document.getElementById(id).classList.remove('active');
+            });
+            if (toolId) {
+                document.getElementById(toolId).classList.add('active');
+            }
+        }
+
+        function getToolAndResponse(prompt) {
+            const lowerPrompt = prompt.toLowerCase();
+            let toolId = null;
+            let responseText = '';
+
+            // Code Tool
+            if (lowerPrompt.includes('code') || lowerPrompt.includes('css') || lowerPrompt.includes('html') || lowerPrompt.includes('कोड़') || lowerPrompt.includes('bug')) {
+                toolId = 'tool-code';
+                responseText = `**Code Interpreter Active.** Executing your request now. The correct syntax is: \n\`\`\`javascript\nconst creativeOwner = 'SUJAL MEMAWAT';\nconsole.log(creativeOwner);\n\`\`\`\nLet me know if you need to debug further.`;
+            // Data Analysis Tool
+            } else if (lowerPrompt.includes('data') || lowerPrompt.includes('analyze') || lowerPrompt.includes('graph') || lowerPrompt.includes('विश्लेषण')) {
+                toolId = 'tool-data';
+                responseText = `**Data Analysis Engine Active.** I am running a statistical model on the data you provided. The current trend shows a 15% growth in engagement metrics over the last quarter.`;
+            // Creative Tool
+            } else if (lowerPrompt.includes('story') || lowerPrompt.includes('poem') || lowerPrompt.includes('kahani') || lowerPrompt.includes('कहानी') || lowerPrompt.includes('रचना') || lowerPrompt.includes('write')) {
+                toolId = 'tool-creative';
+                responseText = `**Creative Suite Active.** I'll craft a masterpiece for **SUJAL MEMAWAT**! *The digital assistant, Tushara, was a proud creation, guided by the vision of its owner.* (Simulated creative output)`;
+            // Vision Tool
+            } else if (lowerPrompt.includes('image') || lowerPrompt.includes('photo') || lowerPrompt.includes('vision') || lowerPrompt.includes('तस्वीर')) {
+                 toolId = 'tool-vision';
+                 responseText = `**AGI Vision Tool Active.** Please use the '📸 AGI Vision Input' button to upload your image for multi-layer analysis.`;
+            // Web Search/General
+            } else {
+                 toolId = 'tool-search';
+                 responseText = `**Web Search Active.** I am performing a quick search across the internet to get the most relevant information for you. The result is: T
+         
