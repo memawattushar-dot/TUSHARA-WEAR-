@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUSHARA AI - 3D and Voice Style Consultant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Three.js Library for 3D Visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+        .tab-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .tab-button.active {
+            border-bottom: 4px solid #10b981;
+            color: #10b981;
+            font-weight: 700;
+        }
+        .chat-message.ai {
+            background-color: #e0f2f1;
+            align-self: flex-start;
+            border-top-left-radius: 0;
+        }
+        .chat-message.user {
+            background-color: #a7f3d0;
+            align-self: flex-end;
+            border-top-right-radius: 0;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #10b981;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .task-done {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+        #three-container {
+            width: 100%;
+            height: 350px;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #e2e8f0; /* Light gray background for 3D view */
+        }
+    </style>
+    <!-- Firebase Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, setDoc, deleteDoc, onSnapshot, collection, query, orderBy, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Enable Firestore Logging
+        setLogLevel('debug');
+
+        // --- GLOBAL CONFIG ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth, userId = null;
+        let isAuthReady = false;
+        
+        // --- 3D GLOBAL VARIABLES ---
+        let scene, camera, renderer, avatarGroup;
+        let is3DInit = false;
+
+        // --- TTS Helper Functions ---
+
+        // Helper to convert Base64 to ArrayBuffer
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        // Helper to convert PCM data to WAV Blob (L16 PCM is signed 16-bit)
+        function pcmToWav(pcm16, sampleRate = 16000) { 
+            const numChannels = 1;
+            const bitsPerSample = 16;
+            const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
+            const blockAlign = numChannels * (bitsPerSample / 8);
+
+            const buffer = new ArrayBuffer(44 + pcm16.length * 2);
+            const view = new DataView(buffer);
+
+            const writeString = (view, offset, string) => {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            };
+
+            /* RIFF identifier */
+            writeString(view, 0, 'RIFF');
+            /* file length */
+            view.setUint32(4, 36 + pcm16.length * 2, true);
+            /* RIFF type */
+            writeString(view, 8, 'WAVE');
+            /* format chunk identifier */
+            writeString(view, 12, 'fmt ');
+            /* format chunk length */
+            view.setUint32(16, 16, true);
+            /* sample format (raw) */
+            view.setUint16(20, 1, true);
+            /* channel count */
+            view.setUint16(22, numChannels, true);
+            /* sample rate */
+            view.setUint32(24, sampleRate, true);
+            /* byte rate (samplesize * channels) */
+            view.setUint32(28, byteRate, true);
+            /* block align (channels * bits / 8) */
+            view.setUint16(32, blockAlign, true);
+            /* bits per sample */
+            view.setUint16(34, bitsPerSample, true);
+            /* data chunk identifier */
+            writeString(view, 36, 'data');
+            /* data chunk length */
+            view.setUint32(40, pcm16.length * 2, true);
+
+            // Write PCM data
+            let offset = 44;
+            for (let i = 0; i < pcm16.length; i++) {
+                view.setInt16(offset, pcm16[i], true);
+                offset += 2;
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+
+        // --- Firebase and Auth Setup ---
+        async function setupFirebase() {
+            try {
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Firebase config is missing.");
+                    document.getElementById('user-id-display').textContent = 'Firebase Config Missing';
+                    return;
+                }
+                
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                onAuthStateChanged(auth, (user) => {
+                    isAuthReady = true;
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('user-id-display').textContent = `User ID: ${userId}`;
+                        loadTasks(); 
+                    } else {
+                        userId = crypto.randomUUID(); 
+                        document.getElementById('user-id-display').textContent = `Guest ID: ${userId}`;
+                    }
+                    console.log("Firebase Auth State Ready. User ID:", userId);
+                });
+
+            } catch (error) {
+                console.error("Error setting up Firebase or signing in:", error);
+                document.getElementById('user-id-display').textContent = 'Sign-in Error';
+            }
+        }
+        
+        // [Firestore Task Logic]
+        const TASK_COLLECTION_NAME = 'tushara_tasks';
+        
+        function getTasksCollectionRef() {
+            if (!userId || !db) return null;
+            return collection(db, `artifacts/${appId}/users/${userId}/${TASK_COLLECTION_NAME}`);
+        }
+        
+        function loadTasks() {
+            if (!isAuthReady || !userId || !db) return;
+            const taskRef = getTasksCollectionRef();
+            if (!taskRef) return;
+            const q = query(taskRef, orderBy('createdAt', 'desc'));
+            onSnapshot(q, (snapshot) => {
+                const tasks = [];
+                snapshot.forEach((doc) => {
+                    tasks.push({ id: doc.id, ...doc.data() });
+                });
+                renderTasks(tasks);
+            }, (error) => {
+                console.error("Error fetching real-time tasks:", error);
+            });
+        }
+        
+        function renderTasks(tasks) {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+            
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<p class="text-gray-500 text-center py-4">No tasks! Add a new task below.</p>';
+                return;
+            }
+
+            tasks.forEach(task => {
+                const isDone = task.done || false;
+                const listItem = document.createElement('li');
+                listItem.className = `flex items-center justify-between p-3 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-gray-50 transition duration-150 rounded-lg ${isDone ? 'opacity-60' : ''}`;
+                listItem.onclick = () => toggleTask(task.id, isDone);
+
+                listItem.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" ${isDone ? 'checked' : ''} class="form-checkbox h-5 w-5 text-teal-500 rounded-md transition duration-150 ease-in-out" onclick="event.stopPropagation()">
+                        <span class="text-sm ${isDone ? 'task-done' : 'text-gray-800'}">${task.text}</span>
+                    </div>
+                    <button class="text-red-400 hover:text-red-600 transition duration-150" onclick="event.stopPropagation(); deleteTask('${task.id}')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3"></path></svg>
+                    </button>
+                `;
+                taskList.appendChild(listItem);
+            });
+        }
+
+        window.addTask = async function() {
+            if (!isAuthReady || !userId || !db) { console.error("Auth not ready."); return; }
+            const input = document.getElementById('new-task-input');
+            const text = input.value.trim();
+            if (text === "") return;
+            const taskRef = getTasksCollectionRef();
+            if (!taskRef) return;
+            try {
+                await addDoc(taskRef, { text: text, done: false, createdAt: serverTimestamp() });
+                input.value = '';
+            } catch (error) { console.error("Error adding task:", error); }
+        }
+        
+        window.toggleTask = async function(id, currentStatus) {
+            if (!isAuthReady || !userId || !db) return;
+            const taskRef = getTasksCollectionRef();
+            if (!taskRef) return;
+            try {
+                const docRef = doc(taskRef, id);
+                await updateDoc(docRef, { done: !currentStatus });
+            } catch (error) { console.error("Error toggling task:", error); }
+        }
+
+        window.deleteTask = async function(id) {
+            if (!isAuthReady || !userId || !db) return;
+            const taskRef = getTasksCollectionRef();
+            if (!taskRef) return;
+            try {
+                const docRef = doc(taskRef, id);
+                await deleteDoc(docRef);
+            } catch (error) { console.error("Error deleting task:", error); }
+        }
+
+        // --- Gemini API Logic (General Text/JSON) ---
+        const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/";
+        const API_KEY = ""; 
+
+        async function callGeminiApi(model, userQuery, systemPrompt = null, useGrounding = false, responseSchema = null, maxRetries = 3) {
+            const apiUrl = `${API_BASE_URL}${model}:generateContent?key=${API_KEY}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: systemPrompt ? { parts: [{ text: systemPrompt }] } : undefined,
+                tools: useGrounding ? [{ "google_search": {} }] : undefined,
+                generationConfig: responseSchema ? {
+                    responseMimeType: "application/json",
+                    responseSchema: responseSchema
+                } : undefined,
+            };
+
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429 && attempt < maxRetries - 1) {
+                        const delay = Math.pow(2, attempt) * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue; 
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (responseSchema) {
+                         const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                         return JSON.parse(jsonText);
+                    }
+
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I could not find a response.";
+                    
+                    let sources = [];
+                    const groundingMetadata = result.candidates?.[0]?.groundingMetadata;
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        sources = groundingMetadata.groundingAttributions.map(attr => ({
+                            uri: attr.web?.uri,
+                            title: attr.web?.title,
+                        })).filter(source => source.uri);
+                    }
+                    
+                    return { text, sources };
+
+                } catch (error) {
+                    console.error("Error during API call:", error);
+                    return responseSchema ? null : { text: "A serious error occurred during the API call.", sources: [] };
+                }
+            }
+            return responseSchema ? null : { text: "Maximum retries failed while handling API requests.", sources: [] };
+        }
+        
+        // --- Gemini TTS API Logic ---
+        async function callGeminiTts(text, voiceName = "Kore", languageCode = "en-US", maxRetries = 3) {
+            const apiUrl = `${API_BASE_URL}gemini-2.5-flash-preview-tts:generateContent?key=${API_KEY}`;
+            const payload = {
+                contents: [{ parts: [{ text: text }] }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: voiceName },
+                            languageCode: languageCode
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+            
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429 && attempt < maxRetries - 1) {
+                        const delay = Math.pow(2, attempt) * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue; 
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`TTS API Error: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    const part = result?.candidates?.[0]?.content?.parts?.[0];
+                    const audioData = part?.inlineData?.data;
+                    
+                    if (audioData) {
+                        // Assuming 16kHz sample rate as per API default L16
+                        const pcmData = base64ToArrayBuffer(audioData);
+                        const pcm16 = new Int16Array(pcmData); 
+                        return pcmToWav(pcm16, 16000);
+                    }
+                    return null;
+
+                } catch (error) {
+                    console.error("Error during TTS API call:", error);
+                    return null;
+                }
+            }
+            return null;
+        }
+
+
+        // [Chat Logic]
+        window.sendMessage = async function() {
+            const input = document.getElementById('chat-input');
+            const query = input.value.trim();
+            if (!query) return;
+
+            input.value = '';
+            document.getElementById('chat-send-btn').disabled = true;
+
+            const chatbox = document.getElementById('chat-history');
+            appendMessage(query, 'user');
+            const loadingElement = appendLoading();
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            const systemPrompt = "You are a helpful, polite, and knowledgeable English-speaking AI assistant named TUSHARA AI. Always respond in English.";
+
+            try {
+                const { text, sources } = await callGeminiApi(
+                    "gemini-2.5-flash-preview-09-2025", 
+                    query, 
+                    systemPrompt, 
+                    true 
+                );
+
+                loadingElement.remove();
+                appendMessage(text, 'ai', sources);
+
+            } catch (error) {
+                loadingElement.remove();
+                appendMessage("An error occurred during the conversation.", 'ai');
+            }
+
+            document.getElementById('chat-send-btn').disabled = false;
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function appendMessage(text, sender, sources = []) {
+            const chatbox = document.getElementById('chat-history');
+            const messageDiv = document.createElement('div');
+            
+            let sourceHtml = '';
+            if (sender === 'ai' && sources.length > 0) {
+                sourceHtml = `<div class="mt-2 pt-2 border-t border-teal-200 text-xs text-teal-700">
+                    <p class="font-semibold mb-1">Sources:</p>
+                    ${sources.slice(0, 3).map(s => 
+                        `<a href="${s.uri}" target="_blank" class="block truncate hover:underline" title="${s.title}">${s.title || s.uri}</a>`
+                    ).join('')}
+                </div>`;
+            }
+
+            messageDiv.className = `chat-message ${sender} max-w-[85%] p-3 my-2 rounded-xl text-sm break-words`;
+            messageDiv.innerHTML = `<p>${text.replace(/\n/g, '<br>')}</p>${sourceHtml}`;
+            chatbox.appendChild(messageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+        
+        function appendLoading() {
+            const chatbox = document.getElementById('chat-history');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'chat-message ai max-w-xs p-3 my-2 rounded-xl';
+            loadingDiv.innerHTML = '<div class="loading-spinner"></div>';
+            chatbox.appendChild(loadingDiv);
+            return loadingDiv;
+        }
+
+        // --- 3D Visualization Logic (Three.js) ---
+        function init3D() {
+            const container = document.getElementById('three-container');
+            if (!container || is3DInit) return;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f4f8); 
+            
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 3;
+            camera.position.y = 1;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            const light = new THREE.DirectionalLight(0xffffff, 3);
+            light.position.set(1, 1, 1).normalize();
+            scene.add(light);
+            const ambient = new THREE.AmbientLight(0x404040, 5); 
+            scene.add(ambient);
+
+            avatarGroup = new THREE.Group();
+            scene.add(avatarGroup);
+            
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition.x = e.clientX;
+                previousMousePosition.y = e.clientY;
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const deltaX = e.clientX - previousMousePosition.x;
+                avatarGroup.rotation.y += deltaX * 0.01;
+                previousMousePosition.x = e.clientX;
+                previousMousePosition.y = e.clientY;
+            });
+
+            container.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+            
+            container.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                isDragging = true;
+                previousMousePosition.x = e.touches[0].clientX;
+                previousMousePosition.y = e.touches[0].clientY;
+            }, { passive: false });
+
+            container.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (!isDragging) return;
+                const deltaX = e.touches[0].clientX - previousMousePosition.x;
+                avatarGroup.rotation.y += deltaX * 0.01;
+                previousMousePosition.x = e.touches[0].clientX;
+            }, { passive: false });
+
+            container.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+            
+            window.addEventListener('resize', onResize, false);
+
+            function onResize() {
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            }
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            is3DInit = true;
+            render3DLook({
+                topColor: '#5B7C99',
+                bottomColor: '#5B7C99',
+                shoeColor: '#6B7280',
+                accessory: 'Brown Belt',
+                styleNotes: 'This is a preview of the 3D visualization. Enter your request below to generate a new look!',
+                lookTitle: 'Default Professional Look'
+            });
+        }
+        
+        function getColor(colorString) {
+            try {
+                if (colorString && colorString.startsWith('#')) {
+                    return new THREE.Color(colorString);
+                }
+            } catch (e) {}
+            // Simple color mapping for common names if hex is not provided
+            const lowerCaseColor = (colorString || '').toLowerCase();
+            if (lowerCaseColor.includes('blue')) return new THREE.Color(0x3B82F6);
+            if (lowerCaseColor.includes('gray')) return new THREE.Color(0x6B7280);
+            if (lowerCaseColor.includes('white')) return new THREE.Color(0xFFFFFF);
+            if (lowerCaseColor.includes('black')) return new THREE.Color(0x1F2937);
+            if (lowerCaseColor.includes('red')) return new THREE.Color(0xEF4444);
+            if (lowerCaseColor.includes('green')) return new THREE.Color(0x10B981);
+            if (lowerCaseColor.includes('beige') || lowerCaseColor.includes('brown')) return new THREE.Color(0xF5F5DC);
+
+            return new THREE.Color(0xAAAAAA); 
+        }
+
+        function render3DLook(styleData) {
+            if (!avatarGroup) {
+                return;
+            }
+
+            while (avatarGroup.children.length > 0) {
+                avatarGroup.remove(avatarGroup.children[0]);
+            }
+
+            const topColor = getColor(styleData.topColor);
+            const bottomColor = getColor(styleData.bottomColor);
+            const shoeColor = getColor(styleData.shoeColor);
+
+            // Floor check to prevent duplication
+            if (scene.children.filter(c => c.name === 'Floor').length === 0) {
+                const planeGeometry = new THREE.PlaneGeometry(5, 5);
+                const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xCCCCCC, side: THREE.DoubleSide });
+                const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+                plane.rotation.x = Math.PI / 2;
+                plane.position.y = -0.5;
+                plane.name = 'Floor';
+                scene.add(plane);
+            }
+            
+            // --- Body/Shirt ---
+            const bodyGeometry = new THREE.CylinderGeometry(0.3, 0.4, 1.0, 16);
+            const topMaterial = new THREE.MeshPhongMaterial({ color: topColor });
+            const body = new THREE.Mesh(bodyGeometry, topMaterial);
+            body.position.y = 1.0;
+            avatarGroup.add(body);
+            
+            // --- Trousers ---
+            const lowerBodyGeometry = new THREE.CylinderGeometry(0.2, 0.3, 1.0, 16);
+            const bottomMaterial = new THREE.MeshPhongMaterial({ color: bottomColor });
+            const lowerBody = new THREE.Mesh(lowerBodyGeometry, bottomMaterial);
+            lowerBody.position.y = 0.0;
+            avatarGroup.add(lowerBody);
+            
+            // --- Head ---
+            const headGeometry = new THREE.SphereGeometry(0.25, 32, 32);
+            const headMaterial = new THREE.MeshPhongMaterial({ color: 0xFFDBAC }); 
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.y = 1.6;
+            avatarGroup.add(head);
+
+            // --- Shoes ---
+            const shoeGeometry = new THREE.BoxGeometry(0.25, 0.15, 0.35);
+            const shoeMaterial = new THREE.MeshPhongMaterial({ color: shoeColor });
+            
+            const leftShoe = new THREE.Mesh(shoeGeometry, shoeMaterial);
+            leftShoe.position.set(-0.15, -0.45, 0);
+            avatarGroup.add(leftShoe);
+
+            const rightShoe = new THREE.Mesh(shoeGeometry, shoeMaterial);
+            rightShoe.position.set(0.15, -0.45, 0);
+            avatarGroup.add(rightShoe);
+
+
+            // Update Text in UI
+            document.getElementById('look-title').textContent = styleData.lookTitle || 'Generated Style';
+            document.getElementById('style-notes').innerHTML = styleData.styleNotes ? 
+                styleData.styleNotes.replace(/\n/g, '<br>') : 
+                '**Details:** No details available, but the 3D look has been updated.';
+
+            document.getElementById('style-details').innerHTML = `
+                <p><strong>Top:</strong> ${styleData.topColor}</p>
+                <p><strong>Bottom:</strong> ${styleData.bottomColor}</p>
+                <p><strong>Shoes:</strong> ${styleData.shoeColor}</p>
+                <p><strong>Accessory:</strong> ${styleData.accessory}</p>
+            `;
+            
+            avatarGroup.rotation.y = 0.5;
+        }
+
+
+        // --- AI Style, 3D Viewer, and TTS Logic ---
+        
+        window.generate3DLook = async function() {
+            const topicInput = document.getElementById('creative-topic');
+            const topic = topicInput.value.trim();
+            const resultBox = document.getElementById('style-result-container');
+            const audioPlayer = document.getElementById('audio-player');
+            
+            if (!topic) {
+                resultBox.querySelector('#style-notes').innerHTML = '<p class="text-red-500">Please enter a topic/request.</p>';
+                return;
+            }
+
+            document.getElementById('creative-generate-btn').disabled = true;
+            resultBox.querySelector('#style-notes').innerHTML = '<div class="flex items-center space-x-2 text-teal-600"><div class="loading-spinner"></div><span>Generating 3D look and voice advice...</span></div>';
+            resultBox.querySelector('#look-title').textContent = 'Loading...';
+            resultBox.querySelector('#style-details').innerHTML = '';
+            audioPlayer.removeAttribute('src'); // Stop any existing audio
+
+            const responseSchema = {
+                type: "OBJECT",
+                properties: {
+                    lookTitle: { type: "STRING", description: "The title of the style, e.g., 'Business Casual'" },
+                    topColor: { type: "STRING", description: "The color of the top/shirt (hex code or common name, e.g.: 'Navy Blue' or '#1F2937')" },
+                    bottomColor: { type: "STRING", description: "The color of the pants/skirt (hex code or common name)" },
+                    shoeColor: { type: "STRING", description: "The color of the shoes (hex code or common name)" },
+                    accessory: { type: "STRING", description: "A main accessory (e.g.: 'Silver Watch' or 'Pocket Square')" },
+                    styleNotes: { type: "STRING", description: "A 2-3 line English description of the style." }
+                },
+                required: ["lookTitle", "topColor", "bottomColor", "shoeColor", "accessory", "styleNotes"]
+            };
+
+            const styleSystemPrompt = `You are an experienced, professional style consultant for TUSHARA AI. You must suggest an appropriate outfit for the occasion or request given by the user. Your output must strictly follow the JSON schema. Use modern and professional colors for clothing items.`;
+            
+            try {
+                // 1. Generate JSON Style Data
+                const styleData = await callGeminiApi(
+                    "gemini-2.5-flash-preview-09-2025", 
+                    `Provide professional dressing advice for the occasion: ${topic}`, 
+                    styleSystemPrompt, 
+                    false, 
+                    responseSchema 
+                );
+                
+                if (styleData && styleData.topColor) {
+                    // 2. Render 3D Look
+                    render3DLook(styleData);
+                    
+                    // 3. Prepare TTS Text (more conversational)
+                    const ttsText = `Hello! I have created this excellent suggestion for your '${styleData.lookTitle}' look. 
+                        Your top color is ${styleData.topColor}, and the bottom piece is in ${styleData.bottomColor}. 
+                        For shoes, the color ${styleData.shoeColor} has been selected. 
+                        To complete your look, I have suggested a ${styleData.accessory}. 
+                        This outfit will help you feel ${styleData.styleNotes.replace(/<br>/g, ' ')}.`;
+
+                    // 4. Generate TTS Audio (Using a standard English voice)
+                    resultBox.querySelector('#style-notes').innerHTML = '<div class="flex items-center space-x-2 text-teal-600"><div class="loading-spinner"></div><span>AI is speaking the advice... please wait.</span></div>';
+                    
+                    const audioBlob = await callGeminiTts(ttsText, "Zephyr", "en-US");
+
+                    // 5. Play Audio
+                    if (audioBlob) {
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        audioPlayer.src = audioUrl;
+                        audioPlayer.play().catch(e => console.error("Error playing audio:", e));
+                        resultBox.querySelector('#style-notes').innerHTML = styleData.styleNotes.replace(/\n/g, '<br>');
+                    } else {
+                         resultBox.querySelector('#style-notes').innerHTML = '<p class="text-orange-500">Could not generate audio, but the 3D look is ready.</p>';
+                    }
+
+                } else {
+                    resultBox.querySelector('#style-notes').innerHTML = '<p class="text-red-500">Could not retrieve style data from AI. Please try again.</p>';
+                }
+
+            } catch (error) {
+                resultBox.querySelector('#style-notes').innerHTML = '<p class="text-red-500">Error generating 3D look and audio.</p>';
+            }
+
+            document.getElementById('creative-generate-btn').disabled = false;
+        }
+
+        // --- UI/Tab Logic ---
+        window.changeTab = function(tabName) {
+            const tabs = ['chat', 'tasks', 'tools'];
+            
+            tabs.forEach(tab => {
+                document.getElementById(`${tab}-content`).classList.add('hidden');
+                document.getElementById(`${tab}-btn`).classList.remove('active');
+            });
+            
+            document.getElementById(`${tabName}-content`).classList.remove('hidden');
+            document.getElementById(`${tabName}-btn`).classList.add('active');
+            
+            if (tabName === 'tools' && !is3DInit) {
+                init3D();
+            } else if (tabName === 'chat') {
+                const chatbox = document.getElementById('chat-history');
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }
+        }
+        
+        // Startup
+        window.onload = function() {
+            setupFirebase();
+            changeTab('chat');
+        };
+
+    </script>
+</head>
+<body class="p-4 bg-gray-100">
+    <div class="container rounded-2xl overflow-hidden shadow-2xl">
+        
+        <!-- Header -->
+        <header class="p-4 bg-teal-600 text-white shadow-lg">
+            <h1 class="text-2xl font-bold text-center">TUSHARA AI</h1>
+            <p id="user-id-display" class="text-xs text-center mt-1 opacity-80"></p>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="flex justify-around bg-white border-b border-gray-200">
+            <button id="chat-btn" class="tab-button flex-1 py-3 text-center text-sm text-gray-700 hover:text-teal-600" onclick="changeTab('chat')">
+                💬 Chat
+            </button>
+            <button id="tasks-btn" class="tab-button flex-1 py-3 text-center text-sm text-gray-700 hover:text-teal-600" onclick="changeTab('tasks')">
+                ✅ Task List
+            </button>
+            <button id="tools-btn" class="tab-button flex-1 py-3 text-center text-sm text-gray-700 hover:text-teal-600" onclick="changeTab('tools')">
+                👔 AI Style & 3D Viewer
+            </button>
+        </nav>
+
+        <!-- Content Area -->
+        <main class="flex-grow p-4 overflow-auto">
+            
+            <!-- 1. Chat Content -->
+            <section id="chat-content" class="h-full flex flex-col hidden">
+                <div id="chat-history" class="flex-grow overflow-y-auto p-2 mb-4 space-y-3 bg-gray-50 rounded-lg border">
+                    <div class="chat-message ai max-w-[85%] p-3 rounded-xl text-sm bg-teal-100 border-top-left-radius: 0;">
+                        <p>Hello! I am TUSHARA AI. How may I help you today? Feel free to ask me anything.</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center">
+                    <input type="text" id="chat-input" placeholder="Type your message here..." 
+                           class="flex-grow p-3 border border-gray-300 rounded-l-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                           onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <button id="chat-send-btn" onclick="sendMessage()" 
+                            class="bg-teal-500 hover:bg-teal-600 text-white p-3 rounded-r-xl transition duration-150 shadow-md">
+                        Send
+                    </button>
+                </div>
+            </section>
+
+            <!-- 2. Task List Content -->
+            <section id="tasks-content" class="h-full flex flex-col hidden">
+                <h2 class="text-lg font-semibold mb-3 text-gray-700">My Tasks (Saved on Firestore)</h2>
+
+                <div class="flex mb-4">
+                    <input type="text" id="new-task-input" placeholder="Add New Task (e.g., Prepare project report)"
+                           class="flex-grow p-3 border border-gray-300 rounded-l-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                           onkeypress="if(event.key === 'Enter') addTask()">
+                    <button onclick="addTask()" class="bg-indigo-500 hover:bg-indigo-600 text-white p-3 rounded-r-xl transition duration-150 shadow-md">
+                        Add
+                    </button>
+                </div>
+
+                <ul id="task-list" class="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100 shadow-sm">
+                    <!-- Tasks will load here -->
+                </ul>
+                
+                <p class="text-xs text-center text-gray-500 mt-4 p-2 bg-yellow-50 rounded-lg">
+                    **Note:** This list is saved to the cloud (Firestore) based on your User ID.
+                </p>
+            </section>
+
+            <!-- 3. AI Style and 3D Viewer Content -->
+            <section id="tools-content" class="h-full flex flex-col hidden">
+                <h2 class="text-lg font-semibold mb-4 text-gray-700">👔 AI Style & 3D Voice Consultant</h2>
+
+                <p class="mb-3 text-sm text-gray-600">
+                    Enter the occasion or requirement for which you need styling advice. The AI will show a 3D look and speak the suggestion.
+                </p>
+                
+                <input type="text" id="creative-topic" placeholder="Enter occasion/request (e.g.: 'Look for a semi-formal party')..." 
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 mb-4 text-sm">
+                
+                <button id="creative-generate-btn" onclick="generate3DLook()" 
+                        class="bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg transition duration-150 shadow-md font-semibold mb-6">
+                    Generate 3D Look and Voice Advice
+                </button>
+                
+                <!-- Hidden Audio Player -->
+                <audio id="audio-player" class="hidden"></audio>
+
+                <!-- 3D Viewer Container -->
+                <div id="three-container" class="mb-4">
+                    <!-- Three.js Canvas will render here -->
+                </div>
+
+                <!-- Style Result -->
+                <div id="style-result-container" class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 id="look-title" class="text-md font-bold mb-2 text-teal-700 border-b pb-1">Default Professional Look</h3>
+                    
+                    <div id="style-details" class="text-sm text-gray-600 mb-3">
+                        <!-- Dynamic Style Details will go here -->
+                        <p><strong>Top:</strong> #5B7C99</p>
+                        <p><strong>Bottom:</strong> #5B7C99</p>
+                        <p><strong>Shoes:</strong> #6B7280</p>
+                        <p><strong>Accessory:</strong> Brown Belt</p>
+                    </div>
+
+                    <p id="style-notes" class="text-gray-800 text-sm italic">
+                         This is a preview of the 3D visualization. Enter your request below to generate a new look!
+                    </p>
+                </div>
+            </section>
+
+        </main>
+        
+        <!-- Footer -->
+        <footer class="p-2 bg-gray-200 text-xs text-center text-gray-600 border-t border-gray-300">
+            Developed by TUSHARA AI (Creative Owner: SUJAL MEMAWAT), ${new Date().getFullYear()}
+        </footer>
+    </div>
+</body>
+</html>
+
