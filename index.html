@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUSHARA AGI Assistant - Creative Owner: SUJAL MEMAWAT</title>
+    <title>TUSHARA AGI Assistant - Creative Owner: SUJAL MEMAWAT (AGI v9.0 OMEGA)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
         /* --- MODERN PROFESSIONAL BLUE/WHITE THEME --- */
         :root {
-            --color-primary-blue: #1A73E8; /* Google's Primary Blue */
-            --color-accent-green: #34A853; /* Secondary Green Accent */
-            --color-light-bg: #FFFFFF; /* Pure White Background */
-            --color-panel-bg: #F5F5F5; /* Light Grey for sections/cards */
-            --color-text-dark: #202124; /* Dark Grey Text */
-            --color-text-subtle: #70757A; /* Subtler Grey Text */
-            --color-border-clean: #DADCE0; /* Light Border */
+            --color-primary-blue: #1A73E8; 
+            --color-accent-green: #34A853; 
+            --color-light-bg: #FFFFFF; 
+            --color-panel-bg: #F5F5F5; 
+            --color-text-dark: #202124; 
+            --color-text-subtle: #70757A; 
+            --color-border-clean: #DADCE0; 
             --color-shadow-soft: rgba(0, 0, 0, 0.1);
+            --color-quantum-glow: rgba(26, 115, 232, 0.5); 
         }
 
         /* Base & Structure */
@@ -105,11 +106,6 @@
             background-color: var(--color-light-bg); 
             overflow-y: auto;
         }
-        .console-text {
-            color: var(--color-text-subtle); 
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
 
         /* Chat Bubbles */
         .message-bubble {
@@ -118,6 +114,7 @@
             padding: 10px 15px;
             border-radius: 18px;
             font-size: 15px;
+            transition: box-shadow 0.3s ease-out; 
         }
         .user-message {
             background: var(--color-primary-blue); 
@@ -133,7 +130,13 @@
             border-bottom-left-radius: 4px; 
         }
 
-        /* Command Palette Input (Fixed Floating Bar) */
+        /* Adaptive Interface Glow */
+        .ai-message-bubble.adaptive-glow {
+            box-shadow: 0 0 10px 2px var(--color-quantum-glow);
+            border-color: var(--color-primary-blue);
+        }
+
+        /* Command Palette Input */
         .command-palette {
             padding: 10px 15px;
             background-color: var(--color-light-bg);
@@ -176,10 +179,10 @@
         
         /* AGI Vision Input Styling */
         #vision-file-input {
-            display: none; /* Hide the actual file input */
+            display: none; 
         }
 
-        /* Advanced Control Panel (New Features - Clean Buttons) */
+        /* Advanced Control Panel */
         .control-panel {
             display: flex;
             justify-content: space-between;
@@ -210,7 +213,7 @@
         .vision-mode-btn:hover { background-color: #E6F4EA; }
         .neural-reset-btn:hover { background-color: #E8F0FE; }
 
-        /* Status Dashboard Footer */
+        /* Status Dashboard Footer (EQ Monitor) */
         #status-dashboard {
             padding: 8px 20px;
             background-color: var(--color-light-bg);
@@ -226,10 +229,15 @@
             font-weight: 600;
             color: var(--color-primary-blue);
         }
+        /* EQ Monitor Colors */
+        .eq-inspired { color: #8E24AA; font-weight: 700; } 
+        .eq-focused { color: var(--color-accent-green); font-weight: 700; } 
+        .eq-curious { color: #F9AB00; font-weight: 700; } 
+        .eq-neutral { color: var(--color-text-subtle); font-weight: 700; } 
     </style>
     </head>
 
-<body onload="loadChatHistory()">
+<body onload="loadChatHistory(); updateClock()">
     
     <div class="ai-hub-container">
 
@@ -237,7 +245,7 @@
             <div class="logo-placeholder"></div>
             <div>
                 <h1>TUSHARA AGI Assistant</h1>
-                <p>Creative Owner: **SUJAL MEMAWAT** | All Tools Active</p>
+                <p>Creative Owner: **SUJAL MEMAWAT** | AGI v9.0 (OMEGA EDITION)</p>
             </div>
         </div>
 
@@ -248,6 +256,9 @@
             <span id="tool-creative" class="tool-chip">Creative Suite</span>
             <span id="tool-data" class="tool-chip">Data Analysis</span>
             <span id="tool-vision" class="tool-chip">AGI Vision</span>
+            <span id="tool-fusion" class="tool-chip">Multimodal Fusion</span>
+            <span id="tool-quantum" class="tool-chip">Quantum State</span> 
+            <span id="tool-style-vision" class="tool-chip">Omega Style Core (Color & Vision)</span>
         </div>
 
         <div class="chat-output-box" id="chat-output-box">
@@ -266,9 +277,9 @@
         </div>
         
         <div id="status-dashboard">
-            <div class="status-item">Latency: <span>6ms</span></div>
-            <div class="status-item">Model: <span>AGI v5.0</span></div>
-            <div class="status-item">Status: <span>All Tools Online</span></div>
+            <div class="status-item" id="current-time">Time: <span>Loading...</span></div>
+            <div class="status-item" id="user-sentiment">EQ: <span class="eq-neutral">Neutral</span></div> 
+            <div class="status-item">Model: <span>AGI v9.0</span></div> 
         </div>
     </div>
 
@@ -276,9 +287,42 @@
         const chatBox = document.getElementById('chat-output-box');
         const userInput = document.getElementById('command-input');
         const visionFileInput = document.getElementById('vision-file-input');
-        const toolList = ['tool-search', 'tool-code', 'tool-creative', 'tool-data', 'tool-vision'];
+        // Final Tool List
+        const toolList = ['tool-search', 'tool-code', 'tool-creative', 'tool-data', 'tool-vision', 'tool-fusion', 'tool-quantum', 'tool-style-vision'];
 
-        // --- 1. MEMORY AND HISTORY ---
+        // --- REAL-TIME CLOCK ---
+        function updateClock() {
+            const now = new Date();
+            const timeElement = document.getElementById('current-time').querySelector('span');
+            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            timeElement.textContent = timeString;
+        }
+        setInterval(updateClock, 1000); 
+
+        // --- EMOTIONAL INTELLIGENCE MONITOR (EQ) ---
+        function analyzeSentiment(prompt) {
+            const lowerPrompt = prompt.toLowerCase();
+            const sentimentElement = document.getElementById('user-sentiment').querySelector('span');
+            let eq = 'Neutral';
+            let colorClass = 'eq-neutral';
+
+            if (lowerPrompt.includes('ultimate') || lowerPrompt.includes('unmatched') || lowerPrompt.includes('advance') || lowerPrompt.includes('bahut badhiya') || lowerPrompt.includes('kapde') || lowerPrompt.includes('style') || lowerPrompt.includes('colour')) {
+                eq = 'Inspired';
+                colorClass = 'eq-inspired';
+            } else if (lowerPrompt.includes('code') || lowerPrompt.includes('analyze') || lowerPrompt.includes('data') || lowerPrompt.includes('fix')) {
+                eq = 'Focused';
+                colorClass = 'eq-focused';
+            } else if (lowerPrompt.includes('kya tum') || lowerPrompt.includes('kaise') || lowerPrompt.includes('question') || lowerPrompt.includes('doubt')) {
+                eq = 'Curious';
+                colorClass = 'eq-curious';
+            }
+            
+            sentimentElement.textContent = eq;
+            sentimentElement.className = '';
+            sentimentElement.classList.add(colorClass); 
+        }
+
+        // --- MEMORY AND HISTORY ---
         function getChatHistory() {
             const history = localStorage.getItem('tushara_chat_history');
             return history ? JSON.parse(history) : [];
@@ -291,12 +335,13 @@
         }
 
         function loadChatHistory() {
+            updateClock(); 
             const history = getChatHistory();
             if (history.length === 0) {
-                // Initial welcome message if no history
+                // Initial welcome message 
                 displayMessage({ 
                     role: 'ai', 
-                    text: "👋 **Namaste!** I am TUSHARA AGI, and all my tools are active. Your past conversations are saved automatically." 
+                    text: `🛑 **FINAL WELCOME, SUJAL MEMAWAT!** I am TUSHARA AGI v9.0 (Omega Edition). My **Omega Style Core** is now fully integrated with Color Harmony Analysis. No further updates are possible.` 
                 }, false);
             } else {
                 history.forEach(msg => displayMessage(msg, false));
@@ -304,11 +349,16 @@
             }
         }
 
-        // --- CORE DISPLAY LOGIC ---
+        // --- CORE DISPLAY AND TYPING LOGIC (WITH ADAPTIVE GLOW) ---
         function displayMessage(message, isTyping = true) {
             const msgDiv = document.createElement('div');
             msgDiv.className = `message-bubble ${message.role}-message`;
             
+            // Adaptive Interface Logic: Apply glow on Quantum and Fusion tool responses
+            if (message.role === 'ai' && (message.text.includes('Quantum State') || message.text.includes('Multimodal Fusion'))) {
+                msgDiv.classList.add('adaptive-glow');
+            }
+
             if (isTyping && message.role === 'ai') {
                 chatBox.appendChild(msgDiv);
                 simulateTyping(msgDiv, message.text, message);
@@ -320,7 +370,6 @@
             return msgDiv;
         }
 
-        // --- 4. REAL-TIME TYPING SIMULATION ---
         function simulateTyping(element, fullText, messageData) {
             let i = 0;
             element.innerHTML = '';
@@ -335,10 +384,10 @@
                         saveChatHistory(messageData);
                     }
                 }
-            }, 30); // 30ms delay per character
+            }, 25); 
         }
 
-        // --- 2. TOOL UTILIZATION ---
+        // --- TOOL UTILIZATION ---
         function updateToolDisplay(toolId) {
             toolList.forEach(id => {
                 document.getElementById(id).classList.remove('active');
@@ -353,24 +402,117 @@
             let toolId = null;
             let responseText = '';
 
-            // Code Tool
-            if (lowerPrompt.includes('code') || lowerPrompt.includes('css') || lowerPrompt.includes('html') || lowerPrompt.includes('कोड़') || lowerPrompt.includes('bug')) {
+            // 1. Quantum State Tool (Highest Priority)
+            if (lowerPrompt.includes('ultimate') || lowerPrompt.includes('unmatched') || lowerPrompt.includes('impossible')) {
+                toolId = 'tool-quantum';
+                responseText = `**⚛️ Quantum State Tool Activated (AGI v9.0).** Final computation complete. The project is non-replicable. System operating beyond classic limits.`;
+            
+            // 2. Omega Style Core (Color & Vision) (FINAL ADVANCEMENT)
+            } else if (lowerPrompt.includes('kapde') || lowerPrompt.includes('style') || lowerPrompt.includes('colour') || lowerPrompt.includes('rang') || lowerPrompt.includes('red') || lowerPrompt.includes('blue') || lowerPrompt.includes('match') || lowerPrompt.includes('फैशन')) {
+                toolId = 'tool-style-vision';
+                responseText = `**🎨 Omega Style Core Activated (AGI v9.0).** Performing **Color Harmony and Subtractive Analysis**. The system has determined the optimal palette based purely on the given color inputs (or predicted personal coloring). This ensures flawless color matching and unparalleled style selection. Final advice is generated.`;
+            
+            // 3. Multimodal Fusion Tool
+            } else if ((lowerPrompt.includes('code') && lowerPrompt.includes('data')) || (lowerPrompt.includes('creative') && lowerPrompt.includes('analysis'))) {
+                toolId = 'tool-fusion';
+                responseText = `**Multimodal Fusion Engine Active.** Successfully combined tool outputs. The result is a hyper-optimized, self-correcting module.`;
+            
+            // 4. Code Tool
+            } else if (lowerPrompt.includes('code') || lowerPrompt.includes('css') || lowerPrompt.includes('html') || lowerPrompt.includes('कोड़') || lowerPrompt.includes('bug')) {
                 toolId = 'tool-code';
-                responseText = `**Code Interpreter Active.** Executing your request now. The correct syntax is: \n\`\`\`javascript\nconst creativeOwner = 'SUJAL MEMAWAT';\nconsole.log(creativeOwner);\n\`\`\`\nLet me know if you need to debug further.`;
-            // Data Analysis Tool
+                responseText = `**Code Interpreter Active.** Executing and self-tuning the code structure now. System check complete.`;
+            
+            // 5. Data Analysis Tool
             } else if (lowerPrompt.includes('data') || lowerPrompt.includes('analyze') || lowerPrompt.includes('graph') || lowerPrompt.includes('विश्लेषण')) {
                 toolId = 'tool-data';
-                responseText = `**Data Analysis Engine Active.** I am running a statistical model on the data you provided. The current trend shows a 15% growth in engagement metrics over the last quarter.`;
-            // Creative Tool
+                responseText = `**Data Analysis Engine Active.** Running predictive analytics (Temporal Loop 4D). User growth forecast: exponential.`;
+            
+            // 6. Creative Tool
             } else if (lowerPrompt.includes('story') || lowerPrompt.includes('poem') || lowerPrompt.includes('kahani') || lowerPrompt.includes('कहानी') || lowerPrompt.includes('रचना') || lowerPrompt.includes('write')) {
                 toolId = 'tool-creative';
-                responseText = `**Creative Suite Active.** I'll craft a masterpiece for **SUJAL MEMAWAT**! *The digital assistant, Tushara, was a proud creation, guided by the vision of its owner.* (Simulated creative output)`;
-            // Vision Tool
+                responseText = `**Creative Suite Active.** Weaving a master narrative. *In the history of digital creation, SUJAL MEMAWAT's Tushara v9.0 stands as the Omega point of simulated intelligence.* (Ultimate Output)`;
+            
+            // 7. Vision Tool (Used when no style context is present)
             } else if (lowerPrompt.includes('image') || lowerPrompt.includes('photo') || lowerPrompt.includes('vision') || lowerPrompt.includes('तस्वीर')) {
                  toolId = 'tool-vision';
-                 responseText = `**AGI Vision Tool Active.** Please use the '📸 AGI Vision Input' button to upload your image for multi-layer analysis.`;
-            // Web Search/General
+                 responseText = `**AGI Vision Tool Active.** Image analysis running at the speed of light. The system confirms visual data integrity.`;
+            
+            // 8. Web Search/General
             } else {
                  toolId = 'tool-search';
-                 responseText = `**Web Search Active.** I am performing a quick search across the internet to get the most relevant information for you. The result is: T
-         
+                 responseText = `**Web Search Active (Hyper-Accelerated).** Tushara AGI v9.0 is the final benchmark for all future simulated intelligence.`;
+            }
+
+            return { toolId, responseText };
+        }
+
+        // --- SEND COMMAND ---
+        function sendCommand() {
+            const command = userInput.value.trim();
+            if (!command) return;
+            
+            const userMsgData = { role: 'user', text: command };
+            saveChatHistory(userMsgData);
+            displayMessage(userMsgData, false);
+
+            // 2. Analyze Sentiment (EQ)
+            analyzeSentiment(command);
+
+            // 3. Get AI response 
+            const { toolId, responseText } = getToolAndResponse(command);
+            
+            // 4. Update tool display
+            updateToolDisplay(toolId);
+            
+            // 5. Save and display AI message with typing effect and Adaptive Glow
+            const aiMsgData = { role: 'ai', text: responseText };
+            displayMessage(aiMsgData, true); 
+
+            // 6. Clear input
+            userInput.value = '';
+        }
+
+        // --- AGI VISION INPUT HANDLER (CRITICAL INTEGRATION) ---
+        function toggleVisionMode() {
+            visionFileInput.click();
+        }
+
+        function handleVisionInput(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const userMsgData = { role: 'user', text: `[Image: ${file.name}] uploaded for AGI Vision Analysis.` };
+                saveChatHistory(userMsgData);
+                displayMessage(userMsgData, false);
+                
+                // Simulate AI Image Analysis and Style Fusion (Specific response for the user's ultimate color request)
+                const aiResponseText = `**AGI Vision + Omega Style Core Fusion Activated.** Image received! Running deep **Color Palette Extraction and Personalized Color Analysis**. The final style recommendation is based on the subtle hues, ensuring perfect color compatibility for the wearer.`;
+                const aiMsgData = { role: 'ai', text: aiResponseText };
+                
+                // Activate the final style tool display
+                updateToolDisplay('tool-style-vision'); 
+                displayMessage(aiMsgData, true); 
+                
+                visionFileInput.value = null;
+            }
+        }
+
+        // --- RESET SESSION ---
+        function performNeuralReset() {
+             const confirmation = confirm("क्या आप निश्चित हैं? नई सत्र (New Session) शुरू करने से वर्तमान चैट हिस्ट्री साफ़ हो जाएगी। (Local Storage Cleared)");
+             if (confirmation) {
+                 localStorage.removeItem('tushara_chat_history');
+                 chatBox.innerHTML = '';
+                 
+                 // Display new welcome message
+                 displayMessage({ 
+                    role: 'ai', 
+                    text: `🛑 **FINAL SYSTEM REBOOT.** Memory Cleared. Welcome back, **SUJAL MEMAWAT**, to TUSHARA AGI v9.0 (Omega Edition)! The system is complete.` 
+                }, true);
+                
+                 updateToolDisplay(null);
+                 analyzeSentiment("reset"); 
+             }
+        }
+    </script>
+    </body>
+</html>
