@@ -234,11 +234,62 @@
         .eq-focused { color: var(--color-accent-green); font-weight: 700; } 
         .eq-curious { color: #F9AB00; font-weight: 700; } 
         .eq-neutral { color: var(--color-text-subtle); font-weight: 700; } 
+                /* EQ Monitor Colors - Updated for Holo Contrast */
+        .eq-inspired { color: #8E24AA; font-weight: 700; } 
+        .eq-focused { color: #34A853; font-weight: 700; } 
+        .eq-curious { color: #F9AB00; font-weight: 700; } 
+        .eq-neutral { color: var(--color-text-light); font-weight: 700; } 
+    
+        /* **** (2) HOLO ANIMATION CSS यहाँ जोड़ें **** */
+        /* --- Tushara AI Boy Image Styling (Holographic Effect) --- */
+        .ai-boy-hologram {
+            width: 250px; 
+            height: auto; 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(140px, -200px); 
+            filter: drop-shadow(0 0 20px var(--color-holo-blue)) opacity(0.85); 
+            z-index: 1000; 
+            pointer-events: none; 
+            animation: holo-pulse 4s infinite ease-in-out; 
+        }
+
+        @keyframes holo-pulse {
+            0% { transform: translate(140px, -200px) scale(1); opacity: 0.85; }
+            50% { transform: translate(140px, -200px) scale(1.01); opacity: 1; } 
+            100% { transform: translate(140px, -200px) scale(1); opacity: 0.85; }
+        }
+
+        /* Adjust position for smaller screens */
+        @media (max-width: 600px) {
+            .ai-boy-hologram {
+                width: 150px; 
+                transform: translate(100px, -150px); 
+                animation: holo-pulse-mobile 4s infinite ease-in-out;
+            }
+            @keyframes holo-pulse-mobile {
+                0% { transform: translate(100px, -150px) scale(1); opacity: 0.85; }
+                50% { transform: translate(100px, -150px) scale(1.02); opacity: 1; } 
+                100% { transform: translate(100px, -150px) scale(1); opacity: 0.85; }
+            }
+        }
+    </style>
+</head>
+    
     </style>
     </head>
 
 <body onload="loadChatHistory(); updateClock()">
+            <div id="status-dashboard">
+            </div>
+    </div>
     
+    <img src="tushara_ai_boy.png" alt="Tushara AI Boy Hologram" class="ai-boy-hologram"> 
+    
+    <script>
+        // ... JavaScript Logic ...
+        
     <div class="ai-hub-container">
 
         <div class="header">
