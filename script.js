@@ -1,32 +1,20 @@
 // ==========================================================
-// 🚨 [START: FIREBASE CONNECTION - MODULE V9/V12] 🚨
-// Firebase V9/V12 सिंटैक्स के लिए Imports
+// 🚨 [START: FIREBASE & GEMINI CONNECTION - MODULE V9/V12] 🚨
 // ==========================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
-// Firestore को भी Import करें यदि आप चैट हिस्ट्री को सेव करने के लिए इसका उपयोग कर रहे हैं
+import { GoogleGenAI } from "https://www.gstatic.com/firebasejs/12.6.0/google-genai.js"; 
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
 
-// Firebase Console से कॉपी किया गया कॉन्फ़िगरेशन कोड
-const firebaseConfig = {
-  // आपकी असली Keys यहाँ हैं
-  apiKey: "AIzaSyDSlpSnkKyMJJz1Sf0ffClEQS6208Oovso",
-  authDomain: "tushara-assistant.firebaseapp.com",
-  projectId: "tushara-assistant",
-  storageBucket: "tushara-assistant.firebasestorage.app",
-  messagingSenderId: "825591383486",
-  appId: "1:825591383486:web:7a617144d4080f201b25ef",
-  measurementId: "G-M7C3FK5FF9"
-};
+// ⚠️ [IMPORTANT]: आपकी असली Gemini API Key यहाँ डाली गई है
+const GEMINI_API_KEY = "AIzaSyD2XiilDCA1YAvocqNNRp22vqutitTdWq0"; 
 
-// Initialize Firebase App
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const db = getFirestore(app); // Firestore डेटाबेस को इनिशियलाइज़ करें
+// Gemini Client को इनिशियलाइज़ करें
+const ai = new GoogleGenAI({apiKey: GEMINI_API_KEY}); 
 
 // ==========================================================
-// 🚨 [END: FIREBASE CONNECTION] 🚨
+// 🚨 [END: FIREBASE & GEMINI CONNECTION] 🚨
 // ==========================================================
 
 
@@ -69,9 +57,6 @@ function analyzeSentiment(prompt) {
 }
 
 // --- MEMORY AND HISTORY ---
-// नोट: यदि आप डेटाबेस का उपयोग कर रहे हैं, तो इन फ़ंक्शंस को Firestore के साथ काम करने के लिए बदलना होगा।
-// यह अभी LocalStorage का उपयोग कर रहा है।
-
 function getChatHistory() {
     const history = localStorage.getItem('tushara_chat_history');
     return history ? JSON.parse(history) : [];
@@ -138,67 +123,65 @@ function simulateTyping(element, fullText, messageData) {
     }, 25); 
 }
 
-// --- TOOL UTILIZATION ---
-function updateToolDisplay(toolId) {
-    toolList.forEach(id => {
-        document.getElementById(id).classList.remove('active');
-    });
-    if (toolId) {
-        document.getElementById(toolId).classList.add('active');
-    }
-}
+// --- TOOL UTILIZATION & GEMINI API CALL ---
 
-function getToolAndResponse(prompt) {
+async function getToolAndResponse(prompt) { 
     const lowerPrompt = prompt.toLowerCase();
-    let toolId = null;
+    let toolId = 'tool-search'; 
     let responseText = '';
 
-    // 1. Quantum State Tool (Highest Priority)
+    // Step 1: Tool Selection Logic
     if (lowerPrompt.includes('ultimate') || lowerPrompt.includes('unmatched') || lowerPrompt.includes('impossible')) {
         toolId = 'tool-quantum';
-        responseText = `**⚛️ Quantum State Tool Activated (AGI v9.1).** Final computation complete. Holo-System operating beyond classic limits.`;
-    
-    // 2. Omega Style Core (Color & Vision)
-    } else if (lowerPrompt.includes('kapde') || lowerPrompt.includes('style') || lowerPrompt.includes('colour') || lowerPrompt.includes('rang') || lowerPrompt.includes('red') || lowerPrompt.includes('blue') || lowerPrompt.includes('match') || lowerPrompt.includes('फैशन')) {
+    } else if (lowerPrompt.includes('kapde') || lowerPrompt.includes('style') || lowerPrompt.includes('colour')) {
         toolId = 'tool-style-vision';
-        responseText = `**🎨 Omega Style Core Activated (AGI v9.1).** Performing **Holo-Color Harmony and Subtractive Analysis**. The system has determined the optimal palette, ensuring flawless color compatibility.`;
-    
-    // 3. Multimodal Fusion Tool
     } else if ((lowerPrompt.includes('code') && lowerPrompt.includes('data')) || (lowerPrompt.includes('creative') && lowerPrompt.includes('analysis'))) {
         toolId = 'tool-fusion';
-        responseText = `**Multimodal Fusion Engine Active.** Successfully combined tool outputs. The result is a hyper-optimized, self-correcting module.`;
-    
-    // 4. Code Tool
-    } else if (lowerPrompt.includes('code') || lowerPrompt.includes('css') || lowerPrompt.includes('html') || lowerPrompt.includes('कोड़') || lowerPrompt.includes('bug')) {
+    } else if (lowerPrompt.includes('code') || lowerPrompt.includes('css')) {
         toolId = 'tool-code';
-        responseText = `**Code Interpreter Active.** Executing and self-tuning the Holo-code structure now. System check complete.`;
-    
-    // 5. Data Analysis Tool
-    } else if (lowerPrompt.includes('data') || lowerPrompt.includes('analyze') || lowerPrompt.includes('graph') || lowerPrompt.includes('विश्लेषण')) {
+    } else if (lowerPrompt.includes('data') || lowerPrompt.includes('analyze')) {
         toolId = 'tool-data';
-        responseText = `**Data Analysis Engine Active.** Running Holo-predictive analytics (Temporal Loop 4D). Forecast: Exponential growth confirmed.`;
-    
-    // 6. Creative Tool
-    } else if (lowerPrompt.includes('story') || lowerPrompt.includes('poem') || lowerPrompt.includes('kahani') || lowerPrompt.includes('कहानी') || lowerPrompt.includes('रचना') || lowerPrompt.includes('write')) {
+    } else if (lowerPrompt.includes('story') || lowerPrompt.includes('poem') || lowerPrompt.includes('kahani')) {
         toolId = 'tool-creative';
-        responseText = `**Creative Suite Active.** Weaving a master narrative. *SUJAL MEMAWAT's Tushara v9.1 is the Omega point of simulated intelligence.* (Holo Output)`;
-    
-    // 7. Vision Tool (Used when no style context is present)
-    } else if (lowerPrompt.includes('image') || lowerPrompt.includes('photo') || lowerPrompt.includes('vision') || lowerPrompt.includes('तस्वीर')) {
+    } else if (lowerPrompt.includes('image') || lowerPrompt.includes('photo') || lowerPrompt.includes('vision')) {
          toolId = 'tool-vision';
-         responseText = `**AGI Vision Tool Active.** Image analysis running at the speed of light within the Holo-screen.`;
-    
-    // 8. Web Search/General
     } else {
          toolId = 'tool-search';
-         responseText = `**Web Search Active (Holo-Accelerated).** Information retrieved. Tushara AGI v9.1 is the final benchmark.`;
     }
+    
+    // Step 2: Gemini API Call
+    try {
+        updateToolDisplay(toolId); 
+        
+        const model = 'gemini-2.5-flash'; 
+        
+        // AI को कॉल करें
+        const response = await ai.models.generateContent({ 
+            model: model,
+            contents: [
+                { role: "user", parts: [{ text: prompt }] }
+            ]
+        });
+        
+        responseText = response.text;
+
+    } catch (error) {
+        console.error("Gemini API Error:", error);
+        // अगर API कॉल में कोई एरर आता है, तो यह स्थानीय मैसेज दिखाएँ
+        responseText = "API call ke dauran ek gambhir error hua. (Gemini Key ya Network mein samasya)";
+        toolId = null; 
+    }
+
+    // AI का रिस्पॉन्स आने के बाद, टूल का नाम जोड़ें 
+    const toolPrefix = `**[${toolId ? toolId.replace('tool-', '').toUpperCase() : 'ERROR'} Tool Active]** `;
+    responseText = toolPrefix + responseText;
 
     return { toolId, responseText };
 }
 
+
 // --- SEND COMMAND ---
-function sendCommand() {
+async function sendCommand() { 
     const command = userInput.value.trim();
     if (!command) return;
     
@@ -208,7 +191,7 @@ function sendCommand() {
 
     analyzeSentiment(command);
 
-    const { toolId, responseText } = getToolAndResponse(command);
+    const { toolId, responseText } = await getToolAndResponse(command); 
     
     updateToolDisplay(toolId);
     
@@ -217,6 +200,7 @@ function sendCommand() {
 
     userInput.value = '';
 }
+
 
 // --- AGI VISION INPUT HANDLER ---
 function toggleVisionMode() {
