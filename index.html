@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUSHARA AGI Assistant - The World's Most Advanced AI Stylist</title>
+    <title>TUSHARA AGI Assistant - Hybrid Login</title>
     
     <link rel="manifest" href="manifest.json">
     
@@ -18,20 +18,6 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-        }
-
-        /* Full App Container */
-        .stylist-container {
-            width: 90%;
-            max-width: 500px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            border-top: 5px solid #1a237e;
-            display: none; /* Initially hidden */
-            flex-direction: column;
-            height: 90vh; 
         }
 
         /* --- Login Screen Styles --- */
@@ -60,6 +46,7 @@
             box-sizing: border-box;
         }
 
+        /* Creator Login Button */
         #login-btn {
             width: 100%;
             padding: 12px;
@@ -70,6 +57,38 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
+            margin-bottom: 15px;
+        }
+        
+        /* Guest Access Button */
+        #guest-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #1a237e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        #guest-btn:hover { background-color: #3f51b5; }
+        #login-btn:hover { background-color: #00796b; }
+
+
+        /* Full App Container */
+        .stylist-container {
+            width: 90%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-top: 5px solid #1a237e;
+            display: none; /* Initially hidden */
+            flex-direction: column;
+            height: 90vh; 
         }
 
         /* Header & Chat Styles */
@@ -123,6 +142,26 @@
             border: 1px solid #e0e0e0;
             border-bottom-left-radius: 5px;
         }
+        
+        /* Loading Indicator Style */
+        .loading-dots {
+            display: inline-block;
+            width: 15px;
+            height: 5px;
+            background-color: #333;
+            border-radius: 50%;
+            animation: dot-loading 1.5s infinite ease-in-out;
+            margin: 0 2px;
+        }
+        .loading-dots:nth-child(1) { animation-delay: 0s; }
+        .loading-dots:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dot-loading {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
 
         /* New Photo/Mode Controls */
         .advanced-controls {
@@ -204,12 +243,17 @@
 <body>
     
     <div id="login-screen">
-        <h2>TUSHARA AGI Login</h2>
+        <h2>TUSHARA AGI Access</h2>
         <p style="color:red; font-size:12px; margin-bottom: 15px;" id="login-error"></p>
-        <input type="text" id="login-username" placeholder="Username (e.g., SUJAL)">
-        <input type="password" id="login-password" placeholder="Password (e.g., SUJAL05052003)">
-        <button id="login-btn" onclick="attemptLogin()">Log In to AGI</button>
-        <p style="margin-top: 15px; font-size: 14px; color: #555;">(Hardcoded Credentials: SUJAL / SUJAL05052003)</p>
+        
+        <input type="text" id="login-username" placeholder="Username (SUJALMEMAWAT)">
+        <input type="password" id="login-password" placeholder="Password (AGI_Creator05)">
+        <button id="login-btn" onclick="attemptLogin()">Log In as Creator</button>
+        
+        <p style="margin: 15px 0 15px 0; font-weight: bold; color: #555;">OR</p>
+        
+        <button id="guest-btn" onclick="continueAsGuest()">Continue as Guest</button>
+
     </div>
 
 
@@ -253,11 +297,36 @@
         // Global state for AGI Mode
         let isAdvancedMode = false;
 
-        // --- HARDCODED CREDENTIALS (Updated Password for Security) ---
-        const VALID_USERNAME_CREATOR = 'SUJAL';
-        const VALID_PASSWORD = 'SUJAL05052003';
+        // --- CREATOR CREDENTIALS ---
+        const VALID_USERNAME_CREATOR = 'SUJALMEMAWAT';
+        const VALID_PASSWORD = 'AGI_Creator05';
+        const CREATOR_FULL_NAME = 'SUJAL MEMAWAT';
+        
+        // --- Identity Feature ---
+        function checkAndSetUserName() {
+            let userName = localStorage.getItem('tushara_app_user');
+            
+            if (!userName || userName === 'Guest' || userName === 'SUJAL MEMAWAT') {
+                const isCreatorLoggedIn = localStorage.getItem('is_creator') === 'true';
 
-        // --- Login Logic ---
+                if (!isCreatorLoggedIn) {
+                    userName = prompt("नमस्ते! कृपया अपना नाम बताएं ताकि हम आपको Personalized Welcome Message de sakein: (Enter your name)");
+                    
+                    if (userName && userName.trim() !== '') {
+                        localStorage.setItem('tushara_app_user', userName.trim());
+                    } else {
+                        userName = 'Guest'; 
+                        localStorage.setItem('tushara_app_user', 'Guest');
+                    }
+                } else {
+                    userName = CREATOR_FULL_NAME;
+                    localStorage.setItem('tushara_app_user', CREATOR_FULL_NAME);
+                }
+            }
+            return userName;
+        }
+
+        // --- CORE LOGIN LOGIC ---
         function attemptLogin() {
             const username = document.getElementById('login-username').value.trim().toUpperCase();
             const password = document.getElementById('login-password').value.trim();
@@ -265,32 +334,36 @@
 
             if (username === VALID_USERNAME_CREATOR && password === VALID_PASSWORD) {
                 errorElement.textContent = '';
-                // Login hone par 'SUJAL MEMAWAT' naam save hoga
                 localStorage.setItem('is_logged_in', 'true');
-                localStorage.setItem('tushara_app_user', 'SUJAL MEMAWAT'); 
+                localStorage.setItem('is_creator', 'true');
+                localStorage.setItem('tushara_app_user', CREATOR_FULL_NAME); 
                 showAppScreen();
             } else {
-                errorElement.textContent = 'Invalid Username or Password! Please try again.';
+                errorElement.textContent = 'Invalid Creator ID or Password! Please try again.';
             }
+        }
+        
+        function continueAsGuest() {
+            localStorage.setItem('is_logged_in', 'true');
+            localStorage.setItem('is_creator', 'false');
+            showAppScreen();
         }
 
         function showAppScreen() {
             loginScreen.style.display = 'none';
             appScreen.style.display = 'flex';
             
-            // Welcome message/Creator acknowledgement is displayed after successful login
-            const userName = localStorage.getItem('tushara_app_user') || 'Owner';
+            const userName = checkAndSetUserName();
             updateWelcomeMessage(userName);
         }
 
-        // Check login status on page load
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('is_logged_in') === 'true') {
                 showAppScreen();
             }
         });
         
-        // --- Identity & Chat Functions ---
+        // --- Chat & Display Functions ---
         
         function displayMessage(text, type) {
             const bubble = document.createElement('div');
@@ -303,81 +376,59 @@
             bubble.innerHTML = text; 
             chatBox.appendChild(bubble);
             chatBox.scrollTop = chatBox.scrollHeight;
+            return bubble; // Return bubble reference for loading state
         }
         
-        // Welcome message update (Creator Acknowledgment - SUJAL MEMAWAT added)
+        function displayLoadingMessage() {
+            const loadingHtml = `Fetching AGI Data <span class="loading-dots"></span><span class="loading-dots"></span><span class="loading-dots"></span>`;
+            return displayMessage(loadingHtml, 'ai');
+        }
+
         function updateWelcomeMessage(name) {
-             // Creator list mein SUJAL MEMAWAT aur AI ka naam shamil hai
-             const creators = `<b>SUJAL MEMAWAT</b>, **${name}**, aur Maine`; 
+             const creators = `<b>SUJAL MEMAWAT</b> aur Maine`; 
              const welcomeMessage = document.createElement('div');
              welcomeMessage.classList.add('message-bubble', 'ai-message-bubble');
-             welcomeMessage.innerHTML = `Welcome back, <b>${name}</b>! I am TUSHARA AGI Assistant. 
+             
+             let messageText = `Welcome, <b>${name}</b>! I am TUSHARA AGI Assistant. 
                 <br>
-                ✨ **Yeh AGI App ${creators} Mil Kar Banayi Hai!** (We built this AGI app together!) ✨
+                ✨ (This app was built by ${creators}.) ✨
                 <br><br>
-                How can I help you today?`;
-            chatBox.appendChild(welcomeMessage);
+                How can I help you today? Ask about fashion, or type 'show features' or 'api status'.`;
+
+             if (name === CREATOR_FULL_NAME) {
+                 messageText = `**WELCOME BACK, ORIGINAL CREATOR** <b>SUJAL MEMAWAT</b>! You have unlocked full Creator Mode. I am TUSHARA AGI Assistant.
+                    <br>
+                    ✨ (This app was built by ${creators}.) ✨
+                    <br><br>
+                    What shall we build next?`;
+             }
+
+             welcomeMessage.innerHTML = messageText;
+             chatBox.appendChild(welcomeMessage);
         }
 
-        // --- Photo Analysis Feature ---
-        function previewImage(event) {
-            const preview = document.getElementById('image-preview');
-            const previewContainer = document.getElementById('image-preview-container');
-            const file = event.target.files[0];
-            
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    previewContainer.style.display = 'block';
-                    displayMessage(`*Photo uploaded and ready for AGI analysis. Ask me for the FitScore!*`, 'system');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                preview.src = '#';
-                preview.style.display = 'none';
-                previewContainer.style.display = 'none';
-            }
+        // --- AGI API SIMULATION BLUEPRINT ---
+        function callAGIBackendAPI(message) {
+            return new Promise(resolve => {
+                // Simulate network latency for advanced AI processing
+                setTimeout(() => {
+                    const lowerCaseMessage = message.toLowerCase();
+                    
+                    if (lowerCaseMessage.includes('api status')) {
+                         resolve({ status: 'success', data: 'TUSHARA AGI API Endpoint: Online. Latency: 50ms (Simulated).' });
+                    }
+                    else if (isAdvancedMode && (lowerCaseMessage.includes('forecast') || lowerCaseMessage.includes('trend'))) {
+                        resolve({ status: 'success', data: 'AGI Data Pipeline connected. Micro-Trend Forecasting API returned: Next week\'s viral color is Digital Cyan, with 70% confidence.' });
+                    } else {
+                        // For simple queries or standard mode, API provides basic status
+                        resolve({ status: 'error', data: 'Standard response sent. AGI API skipped for simple query.' });
+                    }
+                }, 1500); // 1.5 second API call simulation
+            });
         }
-
-        // --- AGI Feature List ---
-        function showAdvancedFeaturesList() {
-            return `<b>AGI Stylist Pro Features (The Final Frontier):</b>
-                <br>
-                1. 🌍 **Geo-Socio-Styling:** Location, weather, aur social context analysis.
-                <br>
-                2. 🧠 **Mood & Bio-Feedback:** Heart rate/stress data se comfort styling.
-                <br>
-                3. 🔮 **Micro-Trend Forecasting:** Aapke sheher ke next viral trends ki prediction.
-                <br>
-                4. 👚 **Auto-Inventory & 3D Creation:** Wardrobe tracking aur naye 3D outfit combinations.
-                <br>
-                5. 🥽 **Holographic Try-On:** Real-time 3D AR try-on ka design.
-                <br><br>
-                (In features ka design ab app mein hai! Inko asal mein chalaane ke liye **Advanced AI Backend** ki zaroorat padegi!)`;
-        }
-
-        // --- AGI Mode Toggle ---
-        function toggleAdvancedMode() {
-            const modeBtn = document.querySelector('.mode-btn');
-            const userName = localStorage.getItem('tushara_app_user') || 'Friend';
-            
-            isAdvancedMode = !isAdvancedMode;
-            
-            if (isAdvancedMode) {
-                modeBtn.textContent = '🧠 AGI Mode: ON';
-                modeBtn.style.backgroundColor = '#d32f2f'; // Red
-                displayMessage(`**AGI Mode ON!** ${userName}, I am now operating at full **Artificial General Intelligence**. Ask me complex, multi-contextual style questions!`, 'ai');
-            } else {
-                modeBtn.textContent = '🧠 AGI Mode: OFF';
-                modeBtn.style.backgroundColor = '#4caf50'; // Green
-                displayMessage(`**AGI Mode OFF!** Returning to standard chat mode.`, 'ai');
-            }
-        }
-
-        // Core Bilingual AI Logic (Simulated)
-        function getAiResponse(userMessage) {
+        
+        // --- Core Response Logic ---
+        function getAiResponse(userMessage, apiResult) {
             const lowerCaseMessage = userMessage.toLowerCase();
             const userName = localStorage.getItem('tushara_app_user') || 'Friend';
             
@@ -385,12 +436,21 @@
                 return showAdvancedFeaturesList(); 
             }
             
-            // --- AGI Mode Specific Responses (Simulated Complexity) ---
+            // Check for API Status command
+            if (lowerCaseMessage.includes('api status') && apiResult.status === 'success') {
+                 return apiResult.data; // Display API status directly
+            }
+
+            // --- AGI Mode Specific Responses (Using simulated API data) ---
             if (isAdvancedMode) {
-                 if (lowerCaseMessage.includes('today')) {
-                    return `**AGI ANALYSIS:** ${userName}, based on geo-data (30°C/80% humidity) and your wardrobe history, I predict a 90% chance your best outfit is the breathable linen shirt. Micro-Trend forecasting suggests pairing it with navy.`;
+                 if (lowerCaseMessage.includes('today') || lowerCaseMessage.includes('style')) {
+                     // Check if API returned forecasting data
+                     if (apiResult.data.includes('Digital Cyan')) {
+                         return `**AGI ANALYSIS (API Fusion):** ${userName}, Geo-Socio-Styling predicts a warm day. The AGI Forecasting API recommends combining light linen with a splash of **Digital Cyan** (the next viral color) to stay ahead of the trend.`;
+                     }
+                    return `**AGI ANALYSIS:** ${userName}, based on your wardrobe history, I predict a high comfort score for a layered outfit today. Proceeding to Outfit Recipe...`;
                 } else if (lowerCaseMessage.includes('photo') || lowerCaseMessage.includes('analysis')) {
-                    return `**AGI BODY SCAN:** Photo analysis complete. Your current FitScore is 8.5/10. I recommend a slight cuff on the sleeves for optimal Golden Ratio alignment. Proceeding to Outfit Recipe...`;
+                    return `**AGI BODY SCAN:** Photo analysis complete. Your current FitScore is 8.5/10. I recommend a slight cuff on the sleeves for optimal Golden Ratio alignment.`;
                 }
             }
             // -----------------------------------------------------
@@ -410,21 +470,64 @@
                 return `Hello, ${userName}! I am Tushara AI Assistant. Ask me about style trends, outfit recipes, or anything else!`;
             }
         }
+        
+        // --- AGI Feature List ---
+        function showAdvancedFeaturesList() {
+            return `<b>AGI Stylist Pro Features (The Final Frontier):</b>
+                <br>
+                1. 🌍 **Geo-Socio-Styling:** Location, weather, aur social context analysis.
+                <br>
+                2. 🧠 **Mood & Bio-Feedback:** Heart rate/stress data se comfort styling.
+                <br>
+                3. 🔮 **Micro-Trend Forecasting:** Aapke sheher ke next viral trends ki prediction.
+                <br>
+                4. 👚 **Auto-Inventory & 3D Creation:** Wardrobe tracking aur naye 3D outfit combinations.
+                <br>
+                5. 🥽 **Holographic Try-On:** Real-time 3D AR try-on ka design.
+                <br><br>
+                (Yeh sab features ka UI is app mein hai, aur ab **API Blueprint** bhi add ho gaya hai!)`;
+        }
 
-        function sendMessage() {
+        function toggleAdvancedMode() {
+            const modeBtn = document.querySelector('.mode-btn');
+            const userName = localStorage.getItem('tushara_app_user') || 'Friend';
+            
+            isAdvancedMode = !isAdvancedMode;
+            
+            if (isAdvancedMode) {
+                modeBtn.textContent = '🧠 AGI Mode: ON';
+                modeBtn.style.backgroundColor = '#d32f2f'; // Red
+                displayMessage(`**AGI Mode ON!** ${userName}, I am now operating at full **Artificial General Intelligence**. Next step will simulate API calls!`, 'ai');
+            } else {
+                modeBtn.textContent = '🧠 AGI Mode: OFF';
+                modeBtn.style.backgroundColor = '#4caf50'; // Green
+                displayMessage(`**AGI Mode OFF!** Returning to standard chat mode.`, 'ai');
+            }
+        }
+        
+        // --- Main Send Message Function (Now Async) ---
+        async function sendMessage() {
             const message = userInput.value.trim();
             if (message === '') return;
 
             displayMessage(message, 'user');
             userInput.value = '';
 
-            setTimeout(() => {
-                const aiResponse = getAiResponse(message);
-                displayMessage(aiResponse, 'ai');
-            }, 500);
+            // Show loading message while simulating API call
+            const loadingBubble = displayLoadingMessage();
+            
+            // Call the simulated AGI Backend API
+            const apiResult = await callAGIBackendAPI(message);
+            
+            // Remove the loading message
+            loadingBubble.remove();
+            
+            // Get the final AI response using the result of the simulated API call
+            const aiResponse = getAiResponse(message, apiResult);
+            displayMessage(aiResponse, 'ai');
         }
         
-        // PWA SCRIPT: Service Worker registration (Yeh tabhi kaam karega jab sw.js file folder mein ho)
+        // PWA SCRIPT: Service Worker registration
         if ('serviceWorker' in navigator) {
           window.addEventListener('load', function() {
             navigator.serviceWorker.register('sw.js').then(function(registration) {
