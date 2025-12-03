@@ -1,0 +1,36 @@
+/* --- Tushara AI Boy Holographic Pulse (Default Animation) --- */
+.ai-boy-hologram {
+    /* holo-pulse animation की पूरी स्टाइलिंग यहाँ से शुरू होती है */
+    /* आप पुरानी style.css से holo-pulse वाला हिस्सा यहाँ कॉपी कर सकते हैं */
+    animation: holo-pulse 4s infinite ease-in-out; 
+    filter: drop-shadow(0 0 20px var(--color-holo-blue)) opacity(0.85); 
+    z-index: 1000; 
+    pointer-events: none; 
+}
+
+@keyframes holo-pulse {
+    0% { transform: translate(140px, -200px) scale(1); opacity: 0.85; }
+    50% { transform: translate(140px, -200px) scale(1.01); opacity: 1; } 
+    100% { transform: translate(140px, -200px) scale(1); opacity: 0.85; }
+}
+
+/* --- Walking Animation (चलने का प्रभाव) --- */
+.ai-boy-hologram.is-walking {
+    /* चलने का इफ़ेक्ट शुरू होने पर, यह दोनों एनिमेशन चलाएगा */
+    animation: walk-across-screen 4s forwards linear, holo-pulse 4s infinite ease-in-out; 
+}
+
+@keyframes walk-across-screen {
+    0% { 
+        transform: translate(140px, -200px) scale(1); 
+        left: 50%; 
+    }
+    50% { 
+        transform: translate(-300px, -200px) scale(1.05); 
+        left: 50%;
+    }
+    100% { 
+        transform: translate(140px, -200px) scale(1); 
+        left: 50%;
+    }
+      }
