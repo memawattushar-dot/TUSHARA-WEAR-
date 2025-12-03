@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUSHARA AGI Assistant - Hybrid Login</title>
+    <title>AI TUSHARA AGI Assistant - Public Launch</title>
     
     <link rel="manifest" href="manifest.json">
+    
+    <link rel="icon" href="tushara_logo_main.png" type="image/png">
     
     <style>
         /* General Setup */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f7f6;
+            background-color: #121212; /* Dark background for premium look */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,250 +24,297 @@
 
         /* --- Login Screen Styles --- */
         #login-screen {
-            background-color: #fff;
+            background-color: #1e1e1e; /* Darker panel */
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             text-align: center;
             width: 90%;
-            max-width: 350px;
+            max-width: 380px;
+            color: #e0e0e0;
+            border: 1px solid #333;
         }
 
         #login-screen h2 {
-            color: #1a237e;
+            color: #00bcd4; /* Teal accent */
             margin-bottom: 25px;
-            font-size: 24px;
+            font-size: 28px;
+            font-weight: 600;
         }
 
         #login-screen input {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
+            border: 1px solid #444;
+            border-radius: 10px;
             box-sizing: border-box;
+            background-color: #2c2c2c;
+            color: white;
+            font-size: 16px;
         }
 
-        /* Creator Login Button */
-        #login-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #00897b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
+        /* Phone & OTP Inputs */
+        #phone-input-container {
+            display: flex;
             margin-bottom: 15px;
         }
-        
-        /* Guest Access Button */
-        #guest-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #1a237e;
+        #login-phone {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        #otp-btn {
+            padding: 12px 15px;
+            background-color: #ff9800; /* Orange accent */
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #otp-btn:hover { background-color: #e68900; }
+        
+        #login-otp, #login-phone {
+            width: auto;
+            margin-bottom: 0;
         }
         
-        #guest-btn:hover { background-color: #3f51b5; }
-        #login-btn:hover { background-color: #00796b; }
+        /* Main Login Button */
+        #login-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #00bcd4; /* Teal primary button */
+            color: #1e1e1e;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        #login-btn:hover { background-color: #0097a7; }
 
 
         /* Full App Container */
         .stylist-container {
-            width: 90%;
+            width: 95%;
             max-width: 500px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background-color: #1e1e1e; /* App main background */
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
             overflow: hidden;
-            border-top: 5px solid #1a237e;
-            display: none; /* Initially hidden */
+            display: none; 
             flex-direction: column;
-            height: 90vh; 
+            height: 95vh; 
+            border: 1px solid #333;
         }
 
-        /* Header & Chat Styles */
+        /* Header (Dark/Professional Look) */
         .header {
-            padding: 15px;
-            background-color: #ffffff;
-            border-bottom: 1px solid #e0e0e0;
+            padding: 15px 20px;
+            background-color: #111; 
+            border-bottom: 1px solid #333;
             text-align: center;
             flex-shrink: 0;
         }
         .header .app-logo {
-            width: 150px;
+            width: 120px; /* Slightly smaller logo */
             height: auto;
             margin-bottom: 5px;
         }
         .header h1 {
-            color: #1a237e;
+            color: #00bcd4;
             font-size: 20px;
             margin: 0;
             font-weight: 800;
         }
         .header p {
-            color: #757575;
+            color: #9e9e9e;
             margin-top: 5px;
             font-size: 14px;
         }
+
+        /* Chat Window */
         .chat-box {
             flex-grow: 1;
             padding: 20px;
             overflow-y: auto;
-            background-color: #f8f9fa;
+            background-color: #1e1e1e; /* Chat background */
         }
+        
+        /* Chat Bubbles (Modernized) */
         .message-bubble {
             margin-bottom: 15px;
-            max-width: 80%;
-            padding: 10px 15px;
+            max-width: 85%;
+            padding: 12px 18px;
             border-radius: 20px;
             line-height: 1.5;
             word-wrap: break-word;
+            font-size: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
         .user-message {
-            background-color: #3f51b5;
-            color: white;
+            background-color: #00bcd4; /* User: Teal/Cyan */
+            color: #111;
             margin-left: auto;
             border-bottom-right-radius: 5px;
         }
         .ai-message-bubble {
-            background-color: #ffffff;
-            color: #333;
+            background-color: #2c2c2c; /* AI: Dark grey, sleek */
+            color: #e0e0e0;
             margin-right: auto;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #444;
             border-bottom-left-radius: 5px;
         }
-        
-        /* Loading Indicator Style */
+
+        /* Loading Dots (Style retained) */
         .loading-dots {
             display: inline-block;
             width: 15px;
             height: 5px;
-            background-color: #333;
+            background-color: #00bcd4;
             border-radius: 50%;
             animation: dot-loading 1.5s infinite ease-in-out;
             margin: 0 2px;
         }
-        .loading-dots:nth-child(1) { animation-delay: 0s; }
-        .loading-dots:nth-child(2) { animation-delay: 0.2s; }
-        .loading-dots:nth-child(3) { animation-delay: 0.4s; }
-
         @keyframes dot-loading {
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1.0); }
         }
 
 
-        /* New Photo/Mode Controls */
+        /* Advanced Controls */
         .advanced-controls {
             display: flex;
             justify-content: space-between;
-            padding: 8px 10px;
-            background-color: #f0f0f0;
-            border-top: 1px solid #eee;
+            padding: 10px 15px;
+            background-color: #111;
+            border-top: 1px solid #333;
         }
         
-        #file-upload {
-            display: none;
-        }
+        #file-upload { display: none; }
 
         .upload-label, .mode-btn {
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-weight: 600;
             cursor: pointer;
             font-size: 14px;
-            transition: background-color 0.2s;
-            border: 1px solid #ccc;
+            transition: background-color 0.3s;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         .upload-label {
             background-color: #ff9800; 
             color: white;
+            flex-grow: 1;
+            margin-right: 10px;
+            text-align: center;
         }
 
         .mode-btn {
             background-color: #4caf50; 
             color: white;
             flex-grow: 1;
-            margin-left: 10px;
+            text-align: center;
         }
         
         .upload-label:hover {background-color: #e68900;}
         .mode-btn:hover {background-color: #43a047;}
 
+        /* Image Preview */
         #image-preview-container {
             display: none;
             padding: 10px;
-            border-bottom: 1px solid #eee;
-            background-color: #fff;
+            border-bottom: 1px solid #333;
+            background-color: #1e1e1e;
         }
         #image-preview {
             max-height: 100px;
             border-radius: 8px;
             margin-bottom: 5px;
+            border: 2px solid #00bcd4;
         }
         
         /* Input Area */
         .chat-input-area {
             display: flex;
-            padding: 10px;
-            background-color: #fff;
-            border-top: 1px solid #eee;
+            padding: 10px 15px;
+            background-color: #111;
+            border-top: 1px solid #333;
             flex-shrink: 0;
         }
         #user-input {
             flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 20px;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 25px;
             font-size: 16px;
             margin-right: 10px;
+            background-color: #2c2c2c;
+            color: white;
         }
         #send-btn {
-            background-color: #00897b;
-            color: white;
+            background-color: #00bcd4;
+            color: #111;
             border: none;
-            padding: 10px 15px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
             font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
+        #send-btn:hover { background-color: #0097a7; }
+
+        /* --- Footer Status Bar */
+        #footer-status {
+            padding: 8px 15px;
+            background-color: #00bcd4; /* Teal bar */
+            color: #111;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: left;
+            border-top: 1px solid #333;
+        }
+        #footer-status span {
+            margin-right: 15px;
+        }
+
     </style>
 </head>
 <body>
     
     <div id="login-screen">
-        <h2>TUSHARA AGI Access</h2>
+        <h2>AI TUSHARA AGI Access</h2>
         <p style="color:red; font-size:12px; margin-bottom: 15px;" id="login-error"></p>
         
-        <input type="text" id="login-username" placeholder="Username (SUJALMEMAWAT)">
-        <input type="password" id="login-password" placeholder="Password (AGI_Creator05)">
-        <button id="login-btn" onclick="attemptLogin()">Log In as Creator</button>
-        
-        <p style="margin: 15px 0 15px 0; font-weight: bold; color: #555;">OR</p>
-        
-        <button id="guest-btn" onclick="continueAsGuest()">Continue as Guest</button>
+        <div id="phone-input-container">
+            <input type="tel" id="login-phone" placeholder="Phone Number (e.g., 9876543210)">
+            <button id="otp-btn" onclick="sendSimulatedOTP()">Send OTP</button>
+        </div>
 
+        <input type="number" id="login-otp" placeholder="Enter 4-Digit OTP (Simulated: 1234)">
+        
+        <button id="login-btn" onclick="attemptLogin()">Verify and Log In</button>
+        
+        <p style="margin-top: 20px; font-size: 12px; color: #777;">*Note: This is a front-end simulation. Actual OTP is 1234 for all users.</p>
     </div>
 
 
     <div class="stylist-container" id="app-screen">
         <div class="header">
-            <img src="tushara_logo_main.png" alt="TUSHARA Logo" class="app-logo"> 
-            <h1>TUSHARA AGI Assistant</h1>
+            <img src="tushara_logo_main.png" alt="AI TUSHARA Logo" class="app-logo"> 
+            <h1>AI TUSHARA AGI Assistant</h1>
             <p>Ready to talk in Hindi or English</p>
         </div>
 
         <div id="image-preview-container">
-            <p style="font-size: 12px; color: #555; margin: 0 0 5px 0;">Photo ready for analysis:</p>
+            <p style="font-size: 12px; color: #9e9e9e; margin: 0 0 5px 0;">Photo ready for analysis:</p>
             <img id="image-preview" src="#" alt="Image Preview" style="display:none;"/>
         </div>
 
@@ -286,6 +335,11 @@
             <input type="text" id="user-input" placeholder="Type your message in Hindi or English..." onkeypress="if(event.key === 'Enter') sendMessage()">
             <button id="send-btn" onclick="sendMessage()">Send</button>
         </div>
+        
+        <div id="footer-status">
+            <span id="creator-status"></span>
+            <span style="float:right;">AI TUSHARA v1.0.1 (Public Launch Ready)</span>
+        </div>
     </div>
 
     <script>
@@ -293,72 +347,109 @@
         const loginScreen = document.getElementById('login-screen');
         const chatBox = document.getElementById('chat-box');
         const userInput = document.getElementById('user-input');
+        const creatorStatusElement = document.getElementById('creator-status');
 
-        // Global state for AGI Mode
         let isAdvancedMode = false;
 
-        // --- CREATOR CREDENTIALS ---
-        const VALID_USERNAME_CREATOR = 'SUJALMEMAWAT';
-        const VALID_PASSWORD = 'AGI_Creator05';
+        // --- SIMULATION CONSTANTS (Security & Identity) ---
+        const SIMULATED_OTP = '1234';
+        const CREATOR_PHONE_ENCODED = 'OTAwNTA1MjAwMw=='; // 9005052003 encoded (Basic Security)
         const CREATOR_FULL_NAME = 'SUJAL MEMAWAT';
         
-        // --- Identity Feature ---
-        function checkAndSetUserName() {
-            let userName = localStorage.getItem('tushara_app_user');
-            
-            if (!userName || userName === 'Guest' || userName === 'SUJAL MEMAWAT') {
-                const isCreatorLoggedIn = localStorage.getItem('is_creator') === 'true';
+        // --- SIMULATED INVENTORY (E-commerce Engine) ---
+        const INVENTORY = {
+            't-shirt': { price: 499, stock: 15 },
+            'hoodie': { price: 1299, stock: 4 },
+            'jeans': { price: 1999, stock: 22 },
+        };
 
-                if (!isCreatorLoggedIn) {
-                    userName = prompt("नमस्ते! कृपया अपना नाम बताएं ताकि हम आपको Personalized Welcome Message de sakein: (Enter your name)");
-                    
-                    if (userName && userName.trim() !== '') {
-                        localStorage.setItem('tushara_app_user', userName.trim());
-                    } else {
-                        userName = 'Guest'; 
-                        localStorage.setItem('tushara_app_user', 'Guest');
-                    }
-                } else {
-                    userName = CREATOR_FULL_NAME;
-                    localStorage.setItem('tushara_app_user', CREATOR_FULL_NAME);
-                }
+        // --- SECURITY FUNCTION (Base64 Decoding) ---
+        function decodeBase64(encodedString) {
+            try {
+                return atob(encodedString);
+            } catch (e) {
+                console.error("Decoding failed:", e);
+                return "";
             }
+        }
+
+        // --- IDENTITY & LOGIN LOGIC ---
+
+        function formatPhoneNumber(phone) {
+            if (phone.length === 10) return `+91 ${phone.substring(0, 5)} ${phone.substring(5, 10)}`;
+            return phone;
+        }
+
+        function checkAndSetUserName(phone) {
+            let userName;
+            const formattedPhone = formatPhoneNumber(phone);
+            const decodedCreatorPhone = decodeBase64(CREATOR_PHONE_ENCODED); 
+
+            if (phone === decodedCreatorPhone) {
+                userName = CREATOR_FULL_NAME;
+                localStorage.setItem('is_creator', 'true');
+            } else {
+                userName = formattedPhone;
+                localStorage.setItem('is_creator', 'false');
+            }
+            localStorage.setItem('tushara_app_user', userName);
             return userName;
         }
-
-        // --- CORE LOGIN LOGIC ---
-        function attemptLogin() {
-            const username = document.getElementById('login-username').value.trim().toUpperCase();
-            const password = document.getElementById('login-password').value.trim();
+        
+        function sendSimulatedOTP() {
+            const phone = document.getElementById('login-phone').value.trim();
             const errorElement = document.getElementById('login-error');
 
-            if (username === VALID_USERNAME_CREATOR && password === VALID_PASSWORD) {
-                errorElement.textContent = '';
-                localStorage.setItem('is_logged_in', 'true');
-                localStorage.setItem('is_creator', 'true');
-                localStorage.setItem('tushara_app_user', CREATOR_FULL_NAME); 
-                showAppScreen();
-            } else {
-                errorElement.textContent = 'Invalid Creator ID or Password! Please try again.';
+            if (phone.length < 10) {
+                errorElement.textContent = 'Please enter a valid 10-digit phone number.';
+                return;
             }
+
+            errorElement.textContent = `OTP Sent! (Simulated: ${SIMULATED_OTP}). Enter it below.`;
+            errorElement.style.color = '#00bcd4'; 
         }
-        
-        function continueAsGuest() {
+
+        function attemptLogin() {
+            const phone = document.getElementById('login-phone').value.trim();
+            const otp = document.getElementById('login-otp').value.trim();
+            const errorElement = document.getElementById('login-error');
+
+            if (phone.length < 10 || otp !== SIMULATED_OTP) {
+                errorElement.textContent = 'Invalid Phone Number or OTP!';
+                errorElement.style.color = 'red';
+                return;
+            }
+
+            errorElement.textContent = '';
             localStorage.setItem('is_logged_in', 'true');
-            localStorage.setItem('is_creator', 'false');
+            localStorage.setItem('last_phone', phone);
+            
+            checkAndSetUserName(phone);
             showAppScreen();
         }
 
+        function updateFooterStatus(userName) {
+            const isCreator = localStorage.getItem('is_creator') === 'true';
+            if (isCreator) {
+                creatorStatusElement.innerHTML = `👑 **CREATOR MODE** | Logged in as ${userName}`;
+            } else {
+                creatorStatusElement.innerHTML = `👤 User: ${userName}`;
+            }
+        }
+        
         function showAppScreen() {
             loginScreen.style.display = 'none';
             appScreen.style.display = 'flex';
             
-            const userName = checkAndSetUserName();
+            const userName = localStorage.getItem('tushara_app_user');
             updateWelcomeMessage(userName);
+            updateFooterStatus(userName);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('is_logged_in') === 'true') {
+            const lastPhone = localStorage.getItem('last_phone');
+            if (localStorage.getItem('is_logged_in') === 'true' && lastPhone) {
+                checkAndSetUserName(lastPhone);
                 showAppScreen();
             }
         });
@@ -376,7 +467,7 @@
             bubble.innerHTML = text; 
             chatBox.appendChild(bubble);
             chatBox.scrollTop = chatBox.scrollHeight;
-            return bubble; // Return bubble reference for loading state
+            return bubble;
         }
         
         function displayLoadingMessage() {
@@ -389,16 +480,16 @@
              const welcomeMessage = document.createElement('div');
              welcomeMessage.classList.add('message-bubble', 'ai-message-bubble');
              
-             let messageText = `Welcome, <b>${name}</b>! I am TUSHARA AGI Assistant. 
+             let messageText = `Welcome, <b>${name}</b>! I am **AI TUSHARA AGI Assistant**. 
                 <br>
-                ✨ (This app was built by ${creators}.) ✨
+                <span style="color:#00bcd4;">✨ (This app was built by ${creators}.) ✨</span>
                 <br><br>
                 How can I help you today? Ask about fashion, or type 'show features' or 'api status'.`;
 
              if (name === CREATOR_FULL_NAME) {
-                 messageText = `**WELCOME BACK, ORIGINAL CREATOR** <b>SUJAL MEMAWAT</b>! You have unlocked full Creator Mode. I am TUSHARA AGI Assistant.
+                 messageText = `**WELCOME BACK, ORIGINAL CREATOR** <b>SUJAL MEMAWAT</b>! You have unlocked full Creator Mode. I am **AI TUSHARA AGI Assistant**.
                     <br>
-                    ✨ (This app was built by ${creators}.) ✨
+                    <span style="color:#00bcd4;">✨ (This app was built by ${creators}.) ✨</span>
                     <br><br>
                     What shall we build next?`;
              }
@@ -410,20 +501,33 @@
         // --- AGI API SIMULATION BLUEPRINT ---
         function callAGIBackendAPI(message) {
             return new Promise(resolve => {
-                // Simulate network latency for advanced AI processing
                 setTimeout(() => {
                     const lowerCaseMessage = message.toLowerCase();
                     
-                    if (lowerCaseMessage.includes('api status')) {
-                         resolve({ status: 'success', data: 'TUSHARA AGI API Endpoint: Online. Latency: 50ms (Simulated).' });
+                    // 1. E-commerce Engine Logic
+                    if (lowerCaseMessage.startsWith('sell ')) {
+                        const productName = lowerCaseMessage.substring(5).trim();
+                        const product = INVENTORY[productName];
+                        if (product) {
+                             const detail = isAdvancedMode ? `Stock: ${product.stock} units. Auto-Shipping calculated: 3-5 days.` : `Price: ₹${product.price}.`;
+                             resolve({ status: 'sale_success', product: productName, price: product.price, detail: detail });
+                        } else {
+                             resolve({ status: 'sale_fail', data: `Error: Product '${productName}' not found in inventory.` });
+                        }
                     }
+                    // 2. API Status Logic
+                    else if (lowerCaseMessage.includes('api status')) {
+                         resolve({ status: 'success', data: 'AI TUSHARA AGI API Endpoint: Online. Latency: 50ms (Simulated).' });
+                    }
+                    // 3. AGI Forecasting Logic
                     else if (isAdvancedMode && (lowerCaseMessage.includes('forecast') || lowerCaseMessage.includes('trend'))) {
                         resolve({ status: 'success', data: 'AGI Data Pipeline connected. Micro-Trend Forecasting API returned: Next week\'s viral color is Digital Cyan, with 70% confidence.' });
-                    } else {
-                        // For simple queries or standard mode, API provides basic status
+                    } 
+                    // 4. Default Error
+                    else {
                         resolve({ status: 'error', data: 'Standard response sent. AGI API skipped for simple query.' });
                     }
-                }, 1500); // 1.5 second API call simulation
+                }, 1500);
             });
         }
         
@@ -432,111 +536,22 @@
             const lowerCaseMessage = userMessage.toLowerCase();
             const userName = localStorage.getItem('tushara_app_user') || 'Friend';
             
+            // E-commerce Sales Response
+            if (apiResult.status === 'sale_success') {
+                const checkoutLink = `<a href='#' style='color: #ff9800; font-weight: bold;'>[Simulated Secure Checkout Link]</a>`;
+                return `**AI TUSHARA E-commerce Engine:** Product found! **${apiResult.product.toUpperCase()}** is available for **₹${apiResult.price}**. <br> ${apiResult.detail} <br><br> Click here to buy now: ${checkoutLink}`;
+            }
+
+            if (apiResult.status === 'sale_fail') {
+                 return `**AI TUSHARA E-commerce Engine:** Sorry, ${userName}. ${apiResult.data} Please check the product name or add it to inventory.`;
+            }
+            
+            // Feature/Status Responses
             if (lowerCaseMessage.includes('sare features') || lowerCaseMessage.includes('show features')) {
                 return showAdvancedFeaturesList(); 
             }
             
-            // Check for API Status command
             if (lowerCaseMessage.includes('api status') && apiResult.status === 'success') {
-                 return apiResult.data; // Display API status directly
+                 return apiResult.data;
             }
-
-            // --- AGI Mode Specific Responses (Using simulated API data) ---
-            if (isAdvancedMode) {
-                 if (lowerCaseMessage.includes('today') || lowerCaseMessage.includes('style')) {
-                     // Check if API returned forecasting data
-                     if (apiResult.data.includes('Digital Cyan')) {
-                         return `**AGI ANALYSIS (API Fusion):** ${userName}, Geo-Socio-Styling predicts a warm day. The AGI Forecasting API recommends combining light linen with a splash of **Digital Cyan** (the next viral color) to stay ahead of the trend.`;
-                     }
-                    return `**AGI ANALYSIS:** ${userName}, based on your wardrobe history, I predict a high comfort score for a layered outfit today. Proceeding to Outfit Recipe...`;
-                } else if (lowerCaseMessage.includes('photo') || lowerCaseMessage.includes('analysis')) {
-                    return `**AGI BODY SCAN:** Photo analysis complete. Your current FitScore is 8.5/10. I recommend a slight cuff on the sleeves for optimal Golden Ratio alignment.`;
-                }
-            }
-            // -----------------------------------------------------
-
-            const hindiKeywords = ['kya', 'kaise', 'batao', 'hain', 'ho', 'bhai', 'mujhe', 'kaha'];
-            const isHindi = hindiKeywords.some(keyword => lowerCaseMessage.includes(keyword));
-
-            if (isHindi) {
-                if (isAdvancedMode) {
-                    return `AGI mode mein, ${userName}, aap bade aur mushkil sawaal poochiye. Maine aapka sawaal samjh liya hai, lekin isse complex banao!`;
-                }
-                return `Mai theek hoon, ${userName}, shukriya! Aap bataiye, fashion ya style se related koi sawaal hai?`;
-            } else {
-                if (isAdvancedMode) {
-                    return `AGI mode demands complexity, ${userName}. I've processed your query, but for a true AGI response, give me more context (e.g., location, mood, event).`;
-                }
-                return `Hello, ${userName}! I am Tushara AI Assistant. Ask me about style trends, outfit recipes, or anything else!`;
-            }
-        }
-        
-        // --- AGI Feature List ---
-        function showAdvancedFeaturesList() {
-            return `<b>AGI Stylist Pro Features (The Final Frontier):</b>
-                <br>
-                1. 🌍 **Geo-Socio-Styling:** Location, weather, aur social context analysis.
-                <br>
-                2. 🧠 **Mood & Bio-Feedback:** Heart rate/stress data se comfort styling.
-                <br>
-                3. 🔮 **Micro-Trend Forecasting:** Aapke sheher ke next viral trends ki prediction.
-                <br>
-                4. 👚 **Auto-Inventory & 3D Creation:** Wardrobe tracking aur naye 3D outfit combinations.
-                <br>
-                5. 🥽 **Holographic Try-On:** Real-time 3D AR try-on ka design.
-                <br><br>
-                (Yeh sab features ka UI is app mein hai, aur ab **API Blueprint** bhi add ho gaya hai!)`;
-        }
-
-        function toggleAdvancedMode() {
-            const modeBtn = document.querySelector('.mode-btn');
-            const userName = localStorage.getItem('tushara_app_user') || 'Friend';
-            
-            isAdvancedMode = !isAdvancedMode;
-            
-            if (isAdvancedMode) {
-                modeBtn.textContent = '🧠 AGI Mode: ON';
-                modeBtn.style.backgroundColor = '#d32f2f'; // Red
-                displayMessage(`**AGI Mode ON!** ${userName}, I am now operating at full **Artificial General Intelligence**. Next step will simulate API calls!`, 'ai');
-            } else {
-                modeBtn.textContent = '🧠 AGI Mode: OFF';
-                modeBtn.style.backgroundColor = '#4caf50'; // Green
-                displayMessage(`**AGI Mode OFF!** Returning to standard chat mode.`, 'ai');
-            }
-        }
-        
-        // --- Main Send Message Function (Now Async) ---
-        async function sendMessage() {
-            const message = userInput.value.trim();
-            if (message === '') return;
-
-            displayMessage(message, 'user');
-            userInput.value = '';
-
-            // Show loading message while simulating API call
-            const loadingBubble = displayLoadingMessage();
-            
-            // Call the simulated AGI Backend API
-            const apiResult = await callAGIBackendAPI(message);
-            
-            // Remove the loading message
-            loadingBubble.remove();
-            
-            // Get the final AI response using the result of the simulated API call
-            const aiResponse = getAiResponse(message, apiResult);
-            displayMessage(aiResponse, 'ai');
-        }
-        
-        // PWA SCRIPT: Service Worker registration
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', function() {
-            navigator.serviceWorker.register('sw.js').then(function(registration) {
-              console.log('Service Worker registered successfully');
-            }, function(err) {
-              console.log('Service Worker registration failed: ', err);
-            });
-          });
-        }
-    </script>
-</body>
-</html>
+    
