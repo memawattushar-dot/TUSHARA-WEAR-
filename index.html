@@ -3,555 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI TUSHARA AGI Assistant - Public Launch</title>
-    
-    <link rel="manifest" href="manifest.json">
-    
-    <link rel="icon" href="tushara_logo_main.png" type="image/png">
+    <title>TUSHARA AGI Assistant - Futuristic Command Hub</title>
     
     <style>
-        /* General Setup */
+        /* --- DARK MODE ADVANCED THEME (Deep Space Blue) --- */
+        :root {
+            --color-primary: #00B8D4; /* Cyan/Aqua Accent for focus */
+            --color-secondary: #FFEA00; /* Yellow Accent for warnings/status */
+            --color-dark-bg: #000022; /* Deep Black Blue Background */
+            --color-panel-bg: #0D47A1; /* Dark Blue Panel/Card Background */
+            --color-text-light: #E0F7FA;
+            --color-shadow: rgba(0, 184, 212, 0.4);
+        }
+
+        /* Base & Structure */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Consolas', 'Fira Code', monospace; /* Monospace font for tech feel */
             margin: 0;
             padding: 0;
-            background-color: #121212; /* Dark background for premium look */
+            background: var(--color-dark-bg);
+            color: var(--color-text-light);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow: hidden; /* Prevent scrolling outside main container */
         }
-
-        /* --- Login Screen Styles --- */
-        #login-screen {
-            background-color: #1e1e1e; /* Darker panel */
-            padding: 40px;
+        .ai-hub-container {
+            width: 98%;
+            max-width: 600px;
+            background-color: var(--color-panel-bg);
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            width: 90%;
-            max-width: 380px;
-            color: #e0e0e0;
-            border: 1px solid #333;
-        }
-
-        #login-screen h2 {
-            color: #00bcd4; /* Teal accent */
-            margin-bottom: 25px;
-            font-size: 28px;
-            font-weight: 600;
-        }
-
-        #login-screen input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #444;
-            border-radius: 10px;
-            box-sizing: border-box;
-            background-color: #2c2c2c;
-            color: white;
-            font-size: 16px;
-        }
-
-        /* Phone & OTP Inputs */
-        #phone-input-container {
-            display: flex;
-            margin-bottom: 15px;
-        }
-        #login-phone {
-            flex-grow: 1;
-            margin-right: 10px;
-        }
-        #otp-btn {
-            padding: 12px 15px;
-            background-color: #ff9800; /* Orange accent */
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #otp-btn:hover { background-color: #e68900; }
-        
-        #login-otp, #login-phone {
-            width: auto;
-            margin-bottom: 0;
-        }
-        
-        /* Main Login Button */
-        #login-btn {
-            width: 100%;
-            padding: 15px;
-            background-color: #00bcd4; /* Teal primary button */
-            color: #1e1e1e;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background-color 0.3s;
-        }
-        
-        #login-btn:hover { background-color: #0097a7; }
-
-
-        /* Full App Container */
-        .stylist-container {
-            width: 95%;
-            max-width: 500px;
-            background-color: #1e1e1e; /* App main background */
-            border-radius: 15px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 30px var(--color-shadow);
             overflow: hidden;
-            display: none; 
+            display: flex; 
             flex-direction: column;
-            height: 95vh; 
-            border: 1px solid #333;
+            height: 98vh; 
+            border: 2px solid var(--color-primary);
         }
 
-        /* Header (Dark/Professional Look) */
+        /* Header & Logo */
         .header {
             padding: 15px 20px;
-            background-color: #111; 
-            border-bottom: 1px solid #333;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .header .app-logo {
-            width: 120px; /* Slightly smaller logo */
-            height: auto;
-            margin-bottom: 5px;
+            background-color: #001f5f; /* Darker header bar */
+            border-bottom: 2px solid var(--color-primary);
+            display: flex;
+            align-items: center;
         }
         .header h1 {
-            color: #00bcd4;
-            font-size: 20px;
+            color: var(--color-primary);
+            font-size: 24px;
             margin: 0;
-            font-weight: 800;
+            font-weight: 900;
         }
         .header p {
-            color: #9e9e9e;
+            color: var(--color-secondary);
+            font-size: 12px;
             margin-top: 5px;
-            font-size: 14px;
         }
 
-        /* Chat Window */
-        .chat-box {
+        /* --- Dynamic AI Tool Display --- */
+        #ai-tool-display {
+            padding: 10px 20px;
+            background: #000033; /* Even darker shade */
+            color: #80CBC4; /* Soft aqua green */
+            font-size: 13px;
+            border-bottom: 1px solid #00B8D433;
+        }
+        #current-tool {
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+        
+        /* Chat/Output Window */
+        .chat-output-box {
             flex-grow: 1;
             padding: 20px;
+            background-color: var(--color-dark-bg); 
             overflow-y: auto;
-            background-color: #1e1e1e; /* Chat background */
+            border-top: 1px solid #00B8D433;
         }
-        
-        /* Chat Bubbles (Modernized) */
+
+        /* Chat Bubbles (Technical Style) */
         .message-bubble {
             margin-bottom: 15px;
-            max-width: 85%;
-            padding: 12px 18px;
-            border-radius: 20px;
-            line-height: 1.5;
-            word-wrap: break-word;
-            font-size: 15px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            padding: 10px 15px;
+            border-radius: 8px; /* Sharper edges */
+            font-size: 14px;
         }
         .user-message {
-            background-color: #00bcd4; /* User: Teal/Cyan */
-            color: #111;
+            background: #00B8D420; /* Primary color transparent background */
+            border-left: 3px solid var(--color-primary);
             margin-left: auto;
-            border-bottom-right-radius: 5px;
+            color: var(--color-text-light);
         }
         .ai-message-bubble {
-            background-color: #2c2c2c; /* AI: Dark grey, sleek */
-            color: #e0e0e0;
+            background-color: #0D47A1;
+            border-right: 3px solid var(--color-secondary);
             margin-right: auto;
-            border: 1px solid #444;
-            border-bottom-left-radius: 5px;
+            color: var(--color-text-light);
         }
 
-        /* Loading Dots (Style retained) */
-        .loading-dots {
-            display: inline-block;
-            width: 15px;
-            height: 5px;
-            background-color: #00bcd4;
-            border-radius: 50%;
-            animation: dot-loading 1.5s infinite ease-in-out;
-            margin: 0 2px;
+        /* --- Command Palette Input (Global Input) --- */
+        .command-palette {
+            padding: 15px 20px;
+            background-color: #001f5f;
+            border-top: 2px solid var(--color-primary);
         }
-        @keyframes dot-loading {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
+        #command-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--color-primary);
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: #000022;
+            color: var(--color-text-light);
+            box-shadow: 0 0 10px var(--color-shadow);
+            transition: box-shadow 0.3s;
+        }
+        #command-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px var(--color-primary);
         }
 
-
-        /* Advanced Controls */
-        .advanced-controls {
+        /* --- Advanced Control Panel (New Features) --- */
+        .control-panel {
             display: flex;
             justify-content: space-between;
-            padding: 10px 15px;
-            background-color: #111;
-            border-top: 1px solid #333;
-        }
-        
-        #file-upload { display: none; }
-
-        .upload-label, .mode-btn {
-            padding: 10px 15px;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-            border: none;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        }
-
-        .upload-label {
-            background-color: #ff9800; 
-            color: white;
-            flex-grow: 1;
-            margin-right: 10px;
-            text-align: center;
-        }
-
-        .mode-btn {
-            background-color: #4caf50; 
-            color: white;
-            flex-grow: 1;
-            text-align: center;
-        }
-        
-        .upload-label:hover {background-color: #e68900;}
-        .mode-btn:hover {background-color: #43a047;}
-
-        /* Image Preview */
-        #image-preview-container {
-            display: none;
-            padding: 10px;
-            border-bottom: 1px solid #333;
-            background-color: #1e1e1e;
-        }
-        #image-preview {
-            max-height: 100px;
-            border-radius: 8px;
-            margin-bottom: 5px;
-            border: 2px solid #00bcd4;
-        }
-        
-        /* Input Area */
-        .chat-input-area {
-            display: flex;
-            padding: 10px 15px;
-            background-color: #111;
-            border-top: 1px solid #333;
-            flex-shrink: 0;
-        }
-        #user-input {
-            flex-grow: 1;
-            padding: 12px;
-            border: 1px solid #444;
-            border-radius: 25px;
-            font-size: 16px;
-            margin-right: 10px;
-            background-color: #2c2c2c;
-            color: white;
-        }
-        #send-btn {
-            background-color: #00bcd4;
-            color: #111;
-            border: none;
             padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
+            background-color: #001f5f;
+            border-top: 1px solid var(--color-secondary);
         }
-        #send-btn:hover { background-color: #0097a7; }
-
-        /* --- Footer Status Bar */
-        #footer-status {
-            padding: 8px 15px;
-            background-color: #00bcd4; /* Teal bar */
-            color: #111;
-            font-size: 12px;
+        .advanced-feature-btn {
+            padding: 10px 15px;
+            border-radius: 8px;
             font-weight: 600;
-            text-align: left;
-            border-top: 1px solid #333;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            font-size: 12px;
         }
-        #footer-status span {
+        .vision-mode-btn {
+            background-color: #7B1FA2; /* Purple */
+            color: white;
+        }
+        .neural-reset-btn {
+            background-color: #D32F2F; /* Red */
+            color: white;
+        }
+        .vision-mode-btn:hover { background-color: #9C27B0; transform: translateY(-1px); }
+        .neural-reset-btn:hover { background-color: #E53935; transform: scale(1.05); }
+
+        /* --- Status Dashboard Footer --- */
+        #status-dashboard {
+            padding: 8px 20px;
+            background-color: var(--color-primary);
+            color: #000033; /* Dark text on bright accent */
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-item {
             margin-right: 15px;
+            white-space: nowrap;
+        }
+        .status-item span {
+            color: var(--color-panel-bg);
+            font-weight: 900;
         }
 
     </style>
 </head>
+
 <body>
     
-    <div id="login-screen">
-        <h2>AI TUSHARA AGI Access</h2>
-        <p style="color:red; font-size:12px; margin-bottom: 15px;" id="login-error"></p>
-        
-        <div id="phone-input-container">
-            <input type="tel" id="login-phone" placeholder="Phone Number (e.g., 9876543210)">
-            <button id="otp-btn" onclick="sendSimulatedOTP()">Send OTP</button>
-        </div>
+    <div class="ai-hub-container">
 
-        <input type="number" id="login-otp" placeholder="Enter 4-Digit OTP (Simulated: 1234)">
-        
-        <button id="login-btn" onclick="attemptLogin()">Verify and Log In</button>
-        
-        <p style="margin-top: 20px; font-size: 12px; color: #777;">*Note: This is a front-end simulation. Actual OTP is 1234 for all users.</p>
-    </div>
-
-
-    <div class="stylist-container" id="app-screen">
         <div class="header">
-            <img src="tushara_logo_main.png" alt="AI TUSHARA Logo" class="app-logo"> 
-            <h1>AI TUSHARA AGI Assistant</h1>
-            <p>Ready to talk in Hindi or English</p>
+            <div style="margin-right: 15px;">
+                <div style="width: 50px; height: 50px; background-color: var(--color-primary); border-radius: 50%; display: inline-block;"></div>
+            </div>
+            <div>
+                <h1>TUSHARA AGI Command Hub</h1>
+                <p>Status: AGI Core Online | Multi-Modal Access</p>
+            </div>
         </div>
 
-        <div id="image-preview-container">
-            <p style="font-size: 12px; color: #9e9e9e; margin: 0 0 5px 0;">Photo ready for analysis:</p>
-            <img id="image-preview" src="#" alt="Image Preview" style="display:none;"/>
+        <div id="ai-tool-display">
+            <span style="color: #FFEA00;">[STATUS]</span> Currently utilizing: <span id="current-tool">Web Search & Analysis Tool</span>
         </div>
 
-        <div class="chat-box" id="chat-box">
+        <div class="chat-output-box" id="chat-output-box">
+            <div style="color: #90CAF9; margin-bottom: 20px;">
+                > TUSHARA AGI v3.0 Initialized.<br>
+                > **Welcome, Operator.** Please enter a command or query into the palette below.<br>
+                > Suggested Command: `/analyze [image file]` or `/generate code:HTML button`
             </div>
 
-        <div class="advanced-controls">
-            <input type="file" id="file-upload" accept="image/*" onchange="previewImage(event)">
-            <label for="file-upload" class="upload-label">
-                📸 Photo Analysis
-            </label>
-            <button class="mode-btn" onclick="toggleAdvancedMode()">
-                🧠 AGI Mode: OFF
-            </button>
+            <div class="message-bubble ai-message-bubble">
+                **Response:** Initial diagnostic sequence complete. All neural pathways nominal. Ready for advanced task execution.
+            </div>
+
+             <div class="message-bubble user-message">
+                Execute creative writing sequence on 'The forgotten city of Indus'.
+            </div>
         </div>
 
-        <div class="chat-input-area">
-            <input type="text" id="user-input" placeholder="Type your message in Hindi or English..." onkeypress="if(event.key === 'Enter') sendMessage()">
-            <button id="send-btn" onclick="sendMessage()">Send</button>
+        <div class="control-panel">
+             <button class="advanced-feature-btn vision-mode-btn" onclick="toggleVisionMode()">👁️ AGI Vision Mode (ON/OFF)</button>
+             <button class="advanced-feature-btn neural-reset-btn" onclick="performNeuralReset()">🧠 Neural Reset</button>
+        </div>
+
+        <div class="command-palette">
+            <input type="text" id="command-input" placeholder="Type command or query here (e.g., /search, /code, /generate)..." onkeypress="if(event.key === 'Enter') sendCommand()">
         </div>
         
-        <div id="footer-status">
-            <span id="creator-status"></span>
-            <span style="float:right;">AI TUSHARA v1.0.1 (Public Launch Ready)</span>
+        <div id="status-dashboard">
+            <div class="status-item">Latency: <span>5ms</span></div>
+            <div class="status-item">Memory Load: <span>12.4%</span></div>
+            <div class="status-item">Mode: <span>AGI Level 3</span></div>
         </div>
     </div>
 
     <script>
-        const appScreen = document.getElementById('app-screen');
-        const loginScreen = document.getElementById('login-screen');
-        const chatBox = document.getElementById('chat-box');
-        const userInput = document.getElementById('user-input');
-        const creatorStatusElement = document.getElementById('creator-status');
-
-        let isAdvancedMode = false;
-
-        // --- SIMULATION CONSTANTS (Security & Identity) ---
-        const SIMULATED_OTP = '1234';
-        const CREATOR_PHONE_ENCODED = 'OTAwNTA1MjAwMw=='; // 9005052003 encoded (Basic Security)
-        const CREATOR_FULL_NAME = 'SUJAL MEMAWAT';
+        // Placeholder functions for the new advanced features
         
-        // --- SIMULATED INVENTORY (E-commerce Engine) ---
-        const INVENTORY = {
-            't-shirt': { price: 499, stock: 15 },
-            'hoodie': { price: 1299, stock: 4 },
-            'jeans': { price: 1999, stock: 22 },
-        };
-
-        // --- SECURITY FUNCTION (Base64 Decoding) ---
-        function decodeBase64(encodedString) {
-            try {
-                return atob(encodedString);
-            } catch (e) {
-                console.error("Decoding failed:", e);
-                return "";
+        function sendCommand() {
+            const input = document.getElementById('command-input');
+            const command = input.value.trim();
+            if (command) {
+                // Simulate processing/response based on command
+                alert(`Executing Command: ${command}`);
+                input.value = '';
+                // In a real app, this sends the command to the AI backend.
             }
         }
 
-        // --- IDENTITY & LOGIN LOGIC ---
-
-        function formatPhoneNumber(phone) {
-            if (phone.length === 10) return `+91 ${phone.substring(0, 5)} ${phone.substring(5, 10)}`;
-            return phone;
-        }
-
-        function checkAndSetUserName(phone) {
-            let userName;
-            const formattedPhone = formatPhoneNumber(phone);
-            const decodedCreatorPhone = decodeBase64(CREATOR_PHONE_ENCODED); 
-
-            if (phone === decodedCreatorPhone) {
-                userName = CREATOR_FULL_NAME;
-                localStorage.setItem('is_creator', 'true');
+        function toggleVisionMode() {
+            const btn = document.querySelector('.vision-mode-btn');
+            if (btn.textContent.includes("OFF")) {
+                btn.textContent = "👁️ AGI Vision Mode (ON)";
+                alert("AGI Vision Mode Activated: Ready for image/video input.");
             } else {
-                userName = formattedPhone;
-                localStorage.setItem('is_creator', 'false');
-            }
-            localStorage.setItem('tushara_app_user', userName);
-            return userName;
-        }
-        
-        function sendSimulatedOTP() {
-            const phone = document.getElementById('login-phone').value.trim();
-            const errorElement = document.getElementById('login-error');
-
-            if (phone.length < 10) {
-                errorElement.textContent = 'Please enter a valid 10-digit phone number.';
-                return;
-            }
-
-            errorElement.textContent = `OTP Sent! (Simulated: ${SIMULATED_OTP}). Enter it below.`;
-            errorElement.style.color = '#00bcd4'; 
-        }
-
-        function attemptLogin() {
-            const phone = document.getElementById('login-phone').value.trim();
-            const otp = document.getElementById('login-otp').value.trim();
-            const errorElement = document.getElementById('login-error');
-
-            if (phone.length < 10 || otp !== SIMULATED_OTP) {
-                errorElement.textContent = 'Invalid Phone Number or OTP!';
-                errorElement.style.color = 'red';
-                return;
-            }
-
-            errorElement.textContent = '';
-            localStorage.setItem('is_logged_in', 'true');
-            localStorage.setItem('last_phone', phone);
-            
-            checkAndSetUserName(phone);
-            showAppScreen();
-        }
-
-        function updateFooterStatus(userName) {
-            const isCreator = localStorage.getItem('is_creator') === 'true';
-            if (isCreator) {
-                creatorStatusElement.innerHTML = `👑 **CREATOR MODE** | Logged in as ${userName}`;
-            } else {
-                creatorStatusElement.innerHTML = `👤 User: ${userName}`;
+                btn.textContent = "👁️ AGI Vision Mode (OFF)";
+                alert("AGI Vision Mode Deactivated.");
             }
         }
-        
-        function showAppScreen() {
-            loginScreen.style.display = 'none';
-            appScreen.style.display = 'flex';
-            
-            const userName = localStorage.getItem('tushara_app_user');
-            updateWelcomeMessage(userName);
-            updateFooterStatus(userName);
-        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const lastPhone = localStorage.getItem('last_phone');
-            if (localStorage.getItem('is_logged_in') === 'true' && lastPhone) {
-                checkAndSetUserName(lastPhone);
-                showAppScreen();
-            }
-        });
-        
-        // --- Chat & Display Functions ---
-        
-        function displayMessage(text, type) {
-            const bubble = document.createElement('div');
-            bubble.classList.add('message-bubble');
-            if (type === 'user') {
-                bubble.classList.add('user-message');
-            } else {
-                bubble.classList.add('ai-message-bubble');
-            }
-            bubble.innerHTML = text; 
-            chatBox.appendChild(bubble);
-            chatBox.scrollTop = chatBox.scrollHeight;
-            return bubble;
-        }
-        
-        function displayLoadingMessage() {
-            const loadingHtml = `Fetching AGI Data <span class="loading-dots"></span><span class="loading-dots"></span><span class="loading-dots"></span>`;
-            return displayMessage(loadingHtml, 'ai');
-        }
-
-        function updateWelcomeMessage(name) {
-             const creators = `<b>SUJAL MEMAWAT</b> aur Maine`; 
-             const welcomeMessage = document.createElement('div');
-             welcomeMessage.classList.add('message-bubble', 'ai-message-bubble');
-             
-             let messageText = `Welcome, <b>${name}</b>! I am **AI TUSHARA AGI Assistant**. 
-                <br>
-                <span style="color:#00bcd4;">✨ (This app was built by ${creators}.) ✨</span>
-                <br><br>
-                How can I help you today? Ask about fashion, or type 'show features' or 'api status'.`;
-
-             if (name === CREATOR_FULL_NAME) {
-                 messageText = `**WELCOME BACK, ORIGINAL CREATOR** <b>SUJAL MEMAWAT</b>! You have unlocked full Creator Mode. I am **AI TUSHARA AGI Assistant**.
-                    <br>
-                    <span style="color:#00bcd4;">✨ (This app was built by ${creators}.) ✨</span>
-                    <br><br>
-                    What shall we build next?`;
+        function performNeuralReset() {
+             const confirmation = confirm("WARNING: Performing Neural Reset will clear the current session memory. Continue?");
+             if (confirmation) {
+                 alert("Neural Reset Initiated. TUSHARA AGI Core Rebooting...");
+                 // In a real app, this would clear session history/memory storage.
+                 window.location.reload(); // Simple reboot simulation
              }
-
-             welcomeMessage.innerHTML = messageText;
-             chatBox.appendChild(welcomeMessage);
         }
 
-        // --- AGI API SIMULATION BLUEPRINT ---
-        function callAGIBackendAPI(message) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    const lowerCaseMessage = message.toLowerCase();
-                    
-                    // 1. E-commerce Engine Logic
-                    if (lowerCaseMessage.startsWith('sell ')) {
-                        const productName = lowerCaseMessage.substring(5).trim();
-                        const product = INVENTORY[productName];
-                        if (product) {
-                             const detail = isAdvancedMode ? `Stock: ${product.stock} units. Auto-Shipping calculated: 3-5 days.` : `Price: ₹${product.price}.`;
-                             resolve({ status: 'sale_success', product: productName, price: product.price, detail: detail });
-                        } else {
-                             resolve({ status: 'sale_fail', data: `Error: Product '${productName}' not found in inventory.` });
-                        }
-                    }
-                    // 2. API Status Logic
-                    else if (lowerCaseMessage.includes('api status')) {
-                         resolve({ status: 'success', data: 'AI TUSHARA AGI API Endpoint: Online. Latency: 50ms (Simulated).' });
-                    }
-                    // 3. AGI Forecasting Logic
-                    else if (isAdvancedMode && (lowerCaseMessage.includes('forecast') || lowerCaseMessage.includes('trend'))) {
-                        resolve({ status: 'success', data: 'AGI Data Pipeline connected. Micro-Trend Forecasting API returned: Next week\'s viral color is Digital Cyan, with 70% confidence.' });
-                    } 
-                    // 4. Default Error
-                    else {
-                        resolve({ status: 'error', data: 'Standard response sent. AGI API skipped for simple query.' });
-                    }
-                }, 1500);
-            });
-        }
+        // Example: Update the tool display dynamically (could be updated by backend response)
+        // setInterval(() => {
+        //     const tools = ['Code Interpreter', 'Web Search & Analysis Tool', 'Creative Writer Core', 'Vision Processor'];
+        //     const currentTool = document.getElementById('current-tool');
+        //     const randomTool = tools[Math.floor(Math.random() * tools.length)];
+        //     currentTool.textContent = randomTool;
+        // }, 5000);
         
-        // --- Core Response Logic ---
-        function getAiResponse(userMessage, apiResult) {
-            const lowerCaseMessage = userMessage.toLowerCase();
-            const userName = localStorage.getItem('tushara_app_user') || 'Friend';
-            
-            // E-commerce Sales Response
-            if (apiResult.status === 'sale_success') {
-                const checkoutLink = `<a href='#' style='color: #ff9800; font-weight: bold;'>[Simulated Secure Checkout Link]</a>`;
-                return `**AI TUSHARA E-commerce Engine:** Product found! **${apiResult.product.toUpperCase()}** is available for **₹${apiResult.price}**. <br> ${apiResult.detail} <br><br> Click here to buy now: ${checkoutLink}`;
-            }
-
-            if (apiResult.status === 'sale_fail') {
-                 return `**AI TUSHARA E-commerce Engine:** Sorry, ${userName}. ${apiResult.data} Please check the product name or add it to inventory.`;
-            }
-            
-            // Feature/Status Responses
-            if (lowerCaseMessage.includes('sare features') || lowerCaseMessage.includes('show features')) {
-                return showAdvancedFeaturesList(); 
-            }
-            
-            if (lowerCaseMessage.includes('api status') && apiResult.status === 'success') {
-                 return apiResult.data;
-            }
-    
+        // Initial setup for tool display
+        // Note: The timer/interval logic is commented out, as it requires more complex scripting.
+        
+    </script>
+</body>
+</html>
